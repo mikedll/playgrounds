@@ -2,23 +2,24 @@
 #import "Rectangle.h"
 
 
-// Fail: Improper way to do inheritance
-// @interface Square : Rectangle {
-// ...
-// @implementation Square {
+// Fail: @interface Square {
+// Rectangle* square = [Square alloc];
+// main.m:102: warning: ‘Square’ may not respond to ‘+alloc’
+// main.m:102: warning: (Messages without a matching method signature
+//
+// Other symptom:
+// *** NSInvocation: warning: object 0x1000021a0 of class 'Square' does not implement methodSignatureForSelector: -- trouble ahead
+// *** NSInvocation: warning: object 0x1000021a0 of class 'Square' does not implement doesNotRecognizeSelector: -- abort
+// 
+// Solution:
+// 
+//   @interface Square : Rectangle {}
+//     ...
+// 
+//   @interface Rectangle : NSObject {
+//     ...
 
-// Undefined symbols:
-//   "_OBJC_CLASS_$_Rectangle", referenced from:
-//       _OBJC_CLASS_$_Square in Square.o
-//   "_OBJC_METACLASS_$_Rectangle", referenced from:
-//       _OBJC_METACLASS_$_Square in Square.o
-// ld: symbol(s) not found
-// collect2: ld returned 1 exit status
 
-
-@interface Square {
-}
-
-// - (BOOL) equalSides;
+@interface Square : Rectangle {}
 
 @end

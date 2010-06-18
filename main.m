@@ -94,14 +94,24 @@ void staticClassVar() {
 // ld: symbol(s) not found
 // collect2: ld returned 1 exit status
 //
-// Works:
-// gcc -framework Foundation main.o TodoList.o Rectangle.o Square.o -o main
+// Similar fail msg:
+// 
+// Undefined symbols:
+//   "_OBJC_CLASS_$_Rectangle", referenced from:
+//       _OBJC_CLASS_$_Square in Square.o
+//   "_OBJC_METACLASS_$_Rectangle", referenced from:
+//       _OBJC_METACLASS_$_Square in Square.o
+// ld: symbol(s) not found
+// collect2: ld returned 1 exit status
+//
+// Solution:
+//   gcc -framework Foundation main.o TodoList.o Rectangle.o Square.o -o main
 
 void inheritanceAndOverriding() {
   Rectangle* rect = [Rectangle alloc];
-  // Rectangle* square = [Square alloc];
+  Rectangle* square = [Square alloc];
 
-  // assert( [square equalSides] );
+  assert( [square equalSides] );
   assert( ![rect equalSides] );
 }
 

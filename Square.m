@@ -3,6 +3,6 @@
 
 @implementation Square 
 
-// - (BOOL) equalSides { return YES; }
+- (BOOL) equalSides { return YES; }
 
 @end
