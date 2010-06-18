@@ -6,12 +6,14 @@
 static NSInteger staticVarToInitOnce;
 
 + (void)initialize {
-
   // without this check, initialize may be called twice.
-  // if( [self class] == [Rectangle class]) {
-  //   assert( staticVarToInitOnce == 0 );
-  //   staticVarToInitOnce++;
-  // }
+  if( self == [Rectangle class]) {
+    assert( staticVarToInitOnce == 0 );
+    staticVarToInitOnce++;
+  }
+  else {
+    NSLog(@"Base class allowed initialized to go to superclass");
+  }
 }
 
 + (NSInteger)getInitializedStaticVar {

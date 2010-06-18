@@ -115,10 +115,10 @@ void inheritanceAndOverriding() {
   assert( ![rect equalSides] );
 }
 
-// void classInitialization() {
-//   Square* square = [Square alloc];
-//   assert( 1 == [square getInitializedStaticVar] );
-// }
+void classInitialization() {
+  Square* square = [Square alloc]; // call Class initialize
+  assert( 1 == [Square getInitializedStaticVar] );
+}
 
 int main(int argc, char* argv[]) {
   NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
@@ -129,7 +129,7 @@ int main(int argc, char* argv[]) {
   unrecognizedSelector();
   staticClassVar();
   inheritanceAndOverriding();
-  // classInitialization();
+  classInitialization();
   
   [pool drain];
   return 0;
