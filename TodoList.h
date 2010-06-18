@@ -5,6 +5,12 @@
   float size;
 }
 
+@property float size;
+
++ (NSInteger)classMethodStaticVar;
+
+- (void)doIsa;
+
 - (void)showSize;
 
 - (void)initSize;
