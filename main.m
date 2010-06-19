@@ -12,13 +12,14 @@ void nslog() {
   NSLog (@"NSLog output as it prints to %s\n", "STDERR");
 }
 
-void allocAndInit() {
+void allocInitsToZero() {
   TodoList* tl = [TodoList alloc];
   assert ( tl.size == 0);
 }
 
-void testClassMembership() {
-  TodoList* myList = [TodoList alloc];  
+void testClassMembershipAndEquality() {
+  TodoList* myList = [TodoList alloc];
+
   [myList doIsa];
 
   assert ( [myList class] == [TodoList class] );
@@ -32,6 +33,9 @@ void testClassMembership() {
   Class classAsClass = [myList class];
   assert ( classAsId == classAsClass );
   assert ( classAsClass == [TodoList class]);  
+
+  TodoList* anotherList = [TodoList alloc];
+  assert( [myList class] == [anotherList class] );
 }
 
 void instantiateObjects() {
@@ -42,9 +46,8 @@ void instantiateObjects() {
   [todoList2 initSize];
   [todoList2 showSize];
 
-  [todoList1 release];
-  [todoList2 release];
-
+  // [todoList1 release];
+  // [todoList2 release];
 }
 
 void versionOfClass() {
@@ -148,21 +151,42 @@ void classFromString() {
   assert( [mysteryObject isKindOfClass: NSClassFromString(classOfMysteryObject) ] );
 }
 
+@interface CartesianPoint : NSObject {
+  float x;
+  float y;
+}
+
+-(float) setX: (float)x y:(float)y;
+@end
+
+@implementation CartesianPoint
+-(float) setX: (float)ax y:(float)ay {
+  x = ax;
+  y = ay;
+}
+@end
+void inplaceClassDefinition() {
+  CartesianPoint *c = [[CartesianPoint alloc] init];
+  [c setX:(1.0) y:(2.0)];
+}
+
+
+#import <objc/Object.h>
+@interface A : Object {} @end
+@implementation A @end
+void nsObjectIsntObjectiveC() {
+  // why doesn't this work?
+  // A *a = [A new];
+}
+
+
 int main(int argc, char* argv[]) {
   NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 
-  int loopSize = 100;
-  int i = 0;
-  
   nslog();
-  allocAndInit();
-
-
-  for( i =0 ; i < loopSize; i++ )
-    instantiateObjects();
-
-  testClassMembership();
-
+  allocInitsToZero();
+  instantiateObjects();
+  testClassMembershipAndEquality();
   versionOfClass();
   unrecognizedSelector();
   staticClassVar();
@@ -171,6 +195,11 @@ int main(int argc, char* argv[]) {
   idCanPointToAnyObject();
   classFromString();
   stringTypes();
+
+
+  inplaceClassDefinition();
+
+  //nsObjectIsntObjectiveC();
   
   [pool drain];
   return 0;
