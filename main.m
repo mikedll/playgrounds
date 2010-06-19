@@ -17,17 +17,8 @@ void allocAndInit() {
   assert ( tl.size == 0);
 }
 
-void instantiateObjects() {
-  TodoList* todoList1 = [TodoList alloc];  
-  [todoList1 showSize];  
-
-  TodoList* todoList2 = [TodoList alloc];
-  [todoList2 initSize];
-  [todoList2 showSize];
-
-
-  TodoList* myList = [TodoList alloc];
-  
+void testClassMembership() {
+  TodoList* myList = [TodoList alloc];  
   [myList doIsa];
 
   assert ( [myList class] == [TodoList class] );
@@ -40,14 +31,22 @@ void instantiateObjects() {
   id classAsId = [myList class];
   Class classAsClass = [myList class];
   assert ( classAsId == classAsClass );
-  assert ( classAsClass == [TodoList class]);
+  assert ( classAsClass == [TodoList class]);  
+}
 
+void instantiateObjects() {
+  TodoList* todoList1 = [TodoList alloc];  
+  [todoList1 showSize];  
+
+  TodoList* todoList2 = [TodoList alloc];
+  [todoList2 initSize];
+  [todoList2 showSize];
+
+  [todoList1 release];
+  [todoList2 release];
 
   int version = [TodoList version];
   NSLog(@"version of class %d\n", version);
-
-  TodoList* tList = [TodoList alloc];
-
 }
 
 void unrecognizedSelector() {
@@ -148,15 +147,18 @@ void classFromString() {
 
 int main(int argc, char* argv[]) {
   NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+
+  int loopSize = 100;
   int i = 0;
   
   nslog();
   allocAndInit();
 
 
-  for( i =0 ; i < 100000; i++ )
+  for( i =0 ; i < loopSize; i++ )
     instantiateObjects();
 
+  testClassMembership();
 
   unrecognizedSelector();
   staticClassVar();
