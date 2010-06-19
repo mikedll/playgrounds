@@ -1,8 +1,10 @@
 
+OBJS = Main.o TodoList.o Rectangle.o Square.o
+
 all: main
 
-main: main.o TodoList.o Rectangle.o Square.o
-	gcc -framework Foundation main.o TodoList.o Rectangle.o Square.o -o main
+main: main.o $(OBJS)
+	gcc -framework Foundation $(OBJS) -o main
 	./main
 
 main.o: main.m TodoList.h Rectangle.h Square.h

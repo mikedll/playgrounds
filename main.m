@@ -8,8 +8,8 @@
 #import "assert.h"
 
 void nslog() {
-  NSLog (@"NSLog prints to %s\n", "STDERR");
-  fprintf(stderr, "kind of like this.\n");
+  fprintf(stderr, "Demonstration of NSLog. It prints to STDERR:\n");
+  NSLog (@"NSLog output as it prints to %s\n", "STDERR");
 }
 
 void allocAndInit() {
@@ -17,8 +17,7 @@ void allocAndInit() {
   assert ( tl.size == 0);
 }
 
-void classInstances() {
-  NSLog(@"Allocating instances of classes\n");
+void instantiateObjects() {
   TodoList* todoList1 = [TodoList alloc];  
   [todoList1 showSize];  
 
@@ -32,6 +31,9 @@ void classInstances() {
   [myList doIsa];
 
   assert ( [myList class] == [TodoList class] );
+  assert ( [myList isKindOfClass: [TodoList class]] );
+  assert ( [myList isMemberOfClass: [TodoList class]] );
+
   assert ( [myList isKindOfClass: [NSObject class]] );
   assert ( ! [myList isMemberOfClass: [NSObject class]] );
   
@@ -120,16 +122,49 @@ void classInitialization() {
   assert( 1 == [Square getInitializedStaticVar] );
 }
 
+void idCanPointToAnyObject() {
+  Rectangle* rect = [Rectangle alloc];
+  Square* square = [Square alloc];
+  id rectAsId = rect;
+  id squareAsId = square;
+  assert( square == squareAsId );
+  assert( rect == rectAsId );
+}
+
+void stringTypes() {
+  id s = @"some string";
+  assert( [s isKindOfClass: [NSString class]] );
+}
+
+void classFromString() {
+  id mysteryObject = [Rectangle alloc];
+
+
+  NSString* classOfMysteryObject = [NSString alloc];
+  classOfMysteryObject = @"Rectangle";
+
+  assert( [mysteryObject isKindOfClass: NSClassFromString(classOfMysteryObject) ] );
+}
+
 int main(int argc, char* argv[]) {
   NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+  int i = 0;
   
   nslog();
   allocAndInit();
-  classInstances();
+
+
+  for( i =0 ; i < 100000; i++ )
+    instantiateObjects();
+
+
   unrecognizedSelector();
   staticClassVar();
   inheritanceAndOverriding();
   classInitialization();
+  idCanPointToAnyObject();
+  classFromString();
+  stringTypes();
   
   [pool drain];
   return 0;
