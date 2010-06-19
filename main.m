@@ -45,6 +45,9 @@ void instantiateObjects() {
   [todoList1 release];
   [todoList2 release];
 
+}
+
+void versionOfClass() {
   int version = [TodoList version];
   NSLog(@"version of class %d\n", version);
 }
@@ -160,6 +163,7 @@ int main(int argc, char* argv[]) {
 
   testClassMembership();
 
+  versionOfClass();
   unrecognizedSelector();
   staticClassVar();
   inheritanceAndOverriding();
