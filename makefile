@@ -1,29 +1,32 @@
 
 OBJS = Main.o TodoList.o Rectangle.o Square.o Fb.o Fa.o
+FLAGS = -g -c
 
-all: main
+all: main runmain
+
+runmain:
+	./main
 
 main: main.o $(OBJS)
 	gcc -framework Foundation $(OBJS) -o main
-	./main
 
 Fa.o: Fa.h Fa.m Fb.h 
-	gcc -c Fa.m
+	gcc $(FLAGS) Fa.m
 
 Fb.o: Fb.h Fb.m Fa.h 
-	gcc -c Fb.m
+	gcc $(FLAGS) Fb.m
 
 main.o: main.m TodoList.h Rectangle.h Square.h Fb.h Fa.h
-	gcc -c main.m
+	gcc $(FLAGS) main.m
 
 TodoList.o: TodoList.h TodoList.m
-	gcc -c TodoList.m
+	gcc $(FLAGS) TodoList.m
 
 Rectangle.o: Rectangle.h Rectangle.m
-	gcc -c Rectangle.m
+	gcc $(FLAGS) Rectangle.m
 
 Square.o: Square.h Square.m
-	gcc -c Square.m
+	gcc $(FLAGS) Square.m
 
 clean:
 	rm -rf *.o main

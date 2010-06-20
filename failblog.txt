@@ -1,2 +1,7 @@
 
 
+Fail: Using c++ syntax instead of Objective C syntax
+
+request for member ‘appendString’ in something not a structure or union
+
+

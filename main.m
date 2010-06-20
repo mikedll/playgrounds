@@ -148,9 +148,35 @@ void idCanPointToAnyObject() {
   assert( rect == rectAsId );
 }
 
-void stringTypes() {
-  id s = @"some string";
-  assert( [s isKindOfClass: [NSString class]] );
+
+void runtimeTypeInterrogation() {
+  Rectangle* r1 = [[Rectangle alloc] init];
+  Rectangle* r2 = [[Square alloc] init];
+
+  assert( [@"Rectangle" isEqualToString:NSStringFromClass( [r1 class] )] );
+  assert( [@"Square" isEqualToString:NSStringFromClass( [r2 class] )] );
+}
+
+void strings() {
+    NSMutableString *s = [[NSMutableString alloc] init];
+
+    [s appendString:@"The"];
+    [s appendString:@" quick " ];
+    [s appendString:@"fox" ];
+    assert( [s isEqualToString:@"The quick fox"] );
+
+    assert( [s hasPrefix:@"The " ] );
+    assert( [s hasSuffix:@"fox"] );
+
+    NSString *toCast = @"as well";
+    [s appendFormat:@" can format in UTF8 %s", [toCast UTF8String] ];
+
+    assert( @"The quick fox can format in UTF8 as well" != s );
+    assert( [@"The quick fox can format in UTF8 as well" isEqualToString:s] );
+
+    NSString *manipulatable = @"aLpHa";
+    assert( [@"ALPHA" isEqualToString: [manipulatable uppercaseString]] );
+    assert( [@"alpha" isEqualToString: [manipulatable lowercaseString]] );
 }
 
 void classFromString() {
@@ -211,19 +237,37 @@ void methodArgsCaseSensitive() {
 }
 
 @interface D : NSObject {}
--(float) reduce:group, ...;
+-(NSString*) combineStrings:(NSString*)first, ...;
 @end
 
 @implementation D
--(float) reduce:group, ... {
-  return 1.0;
-}
+-(NSString*) combineStrings:(NSString*)first, ... {
+  va_list ap;
+  NSString *s = nil;
+  NSMutableString *ret;
 
+  ret = [[NSMutableString alloc] initWithString: first];
+  va_start( ap, first );
+  s = va_arg( ap, NSString* );
+  while( s != nil ) {
+    [ret appendString:@" "];
+    [ret appendString:s];
+    s = va_arg( ap, NSString* );
+  }
+  va_end( ap );
+
+  return ret;
+}
 @end
 
-void variableArguments() {
+void variadicMethod() {
   D *d = [[D alloc] init];
-  [d reduce:2.0, 3.0 ];
+
+  NSString *s = [d combineStrings:@"Hello", @"World", nil];
+  // Fail: *** [main] Segmentation fault
+  // NSMutableString *s = [d combineStrings:@"Hello", @"World"];
+
+  assert( [@"Hello World" isEqualToString:s] );  
 }
 
 // #import <objc/Object.h>
@@ -243,32 +287,33 @@ void mutuallyDependentInterfaceFiles() {
   [fa setFb:fb];
 }
 
-void variableArgLists
-
 int main(int argc, char* argv[]) {
   NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 
   nslog();
-  allocInitsToZero();
-  instantiateObjects();
-  testClassMembershipAndEquality();
-  versionOfClass();
-  unrecognizedSelector();
-  staticClassVar();
-  inheritanceAndOverriding();
-  classInitialization();
-  idCanPointToAnyObject();
-  classFromString();
-  stringTypes();
-  
-  
 
+  allocInitsToZero();
+  unrecognizedSelector();
+  idCanPointToAnyObject();
+
+  runtimeTypeInterrogation();
+  classFromString();
+  strings();
+
+  variadicMethod();
 
   inplaceClassDefinition();
+
+  testClassMembershipAndEquality();
+  versionOfClass();
+
+  instantiateObjects();
   methodArgsCaseSensitive();
-  variableArguments();
   mutuallyDependentInterfaceFiles();
-  variableArgLists();
+  staticClassVar();
+  classInitialization();
+  inheritanceAndOverriding();
+ 
 
   //nsObjectIsntObjectiveC();
   
