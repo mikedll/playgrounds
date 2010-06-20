@@ -20,8 +20,12 @@
 
 
 void nslog() {
-  fprintf(stderr, "Demonstration of NSLog. It prints to STDERR:\n");
-  NSLog (@"NSLog output as it prints to %s\n", "STDERR");
+  NSString *costValue = @"$100";
+  NSLog(@"******* Example of panic debugging to STDERR");
+  NSLog(@"%s: %s", [NSStringFromClass( [costValue class]) UTF8String], [costValue UTF8String]);
+  NSLog(@"************************");
+
+  fprintf(stderr, "Demo complete...\n\n\n");
 }
 
 void allocInitsToZero() {
@@ -30,7 +34,7 @@ void allocInitsToZero() {
 }
 
 void testClassMembershipAndEquality() {
-  TodoList* myList = [TodoList alloc];
+  TodoList* myList = [[TodoList alloc] init];
 
   [myList doIsa];
 
@@ -155,6 +159,16 @@ void runtimeTypeInterrogation() {
 
   assert( [@"Rectangle" isEqualToString:NSStringFromClass( [r1 class] )] );
   assert( [@"Square" isEqualToString:NSStringFromClass( [r2 class] )] );
+
+
+  // This is strictly to demonstrate functionality; probably poor style.
+  Square* r3 = [[Square alloc] init];
+  id mysteryObject = r3;
+  NSString *classNameOfMysteryObject = NSStringFromClass( [r3 class] );
+  Class classOfMysteryObject = NSClassFromString( classNameOfMysteryObject );
+
+  id anotherMysteryObject = [[classOfMysteryObject alloc] init];
+  assert( [anotherMysteryObject isMemberOfClass: [r3 class]] );
 }
 
 void strings() {
@@ -181,8 +195,7 @@ void strings() {
 
 void classFromString() {
   id mysteryObject = [Rectangle alloc];
-
-
+ 
   NSString* classOfMysteryObject = [NSString alloc];
   classOfMysteryObject = @"Rectangle";
 
