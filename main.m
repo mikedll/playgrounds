@@ -49,12 +49,17 @@ void testClassMembershipAndEquality() {
   assert( [myList class] == [anotherList class] );
 }
 
-void allocInitAndProperties() {
+void allocInitNewAndProperties() {
   TodoList* todoList1 = [TodoList alloc];
   assert( todoList1.size == 0 );
+  [todoList1 init];
+  assert( todoList1.size == 1.0 );
 
   TodoList* todoList2 = [[TodoList alloc] init];
   assert(todoList2.size == 1.0);
+
+  TodoList *todoList3 = [TodoList new];
+  assert( todoList3.size == 1.0 );
 }
 
 void versionOfClass() {
@@ -265,14 +270,6 @@ void variadicMethod() {
   assert( [@"Hello World" isEqualToString:s] );  
 }
 
-// #import <objc/Object.h>
-// @interface A : Object {} @end
-// @implementation A @end
-// void nsObjectIsntObjectiveC() {
-//   // why doesn't this work?
-//   // A *a = [A new];
-// }
-
 #import "Fa.h"
 #import "Fb.h"
 void mutuallyDependentInterfaceFiles() {
@@ -287,28 +284,30 @@ int main(int argc, char* argv[]) {
 
   nslog();
 
-  unrecognizedSelector();
-  idCanPointToAnyObject();
-
-  runtimeTypeInterrogation();
-  classFromString();
-  strings();
-
-  variadicMethod();
-
+  // OO and basic ObjC
   inplaceClassDefinition();
-
-  testClassMembershipAndEquality();
-  versionOfClass();
-
-  allocInitAndProperties();
+  allocInitNewAndProperties();
+  idCanPointToAnyObject();
   methodArgsCaseSensitive();
   mutuallyDependentInterfaceFiles();
   staticClassVar();
   classInitialization();
   inheritanceAndOverriding();
  
+  // Metaprogramming
+  runtimeTypeInterrogation();
+  testClassMembershipAndEquality();
+  versionOfClass();
 
+  variadicMethod();
+
+  // Libraries
+  strings();
+
+  unrecognizedSelector();
+
+
+  // 
   //nsObjectIsntObjectiveC();
   
   [pool drain];
