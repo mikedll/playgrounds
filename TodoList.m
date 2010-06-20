@@ -13,16 +13,13 @@ static NSInteger classStaticVariable;
   return classStaticVariable++;
 }
 
+- (id)init {
+  size = 1.0;
+  return self;
+}
 - (void)doIsa {
-  assert( isa == [TodoList class] );
-}
-
-- (void)showSize {
-  fprintf(stderr, "My title is: %f\n", size);
-}
-
-- (void)initSize {
-  size = 10.5;
+  Class classObj = [TodoList class];
+  assert( isa == classObj );
 }
 
 @end

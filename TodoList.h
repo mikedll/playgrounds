@@ -7,13 +7,10 @@
 
 @property float size;
 
+- (id)init;
+
 + (NSInteger)classMethodStaticVar;
 
 - (void)doIsa;
-
-- (void)showSize;
-
-- (void)initSize;
-
 
 @end

@@ -28,11 +28,6 @@ void nslog() {
   fprintf(stderr, "Demo complete...\n\n\n");
 }
 
-void allocInitsToZero() {
-  TodoList* tl = [TodoList alloc];
-  assert ( tl.size == 0);
-}
-
 void testClassMembershipAndEquality() {
   TodoList* myList = [[TodoList alloc] init];
 
@@ -50,20 +45,16 @@ void testClassMembershipAndEquality() {
   assert ( classAsId == classAsClass );
   assert ( classAsClass == [TodoList class]);  
 
-  TodoList* anotherList = [TodoList alloc];
+  TodoList* anotherList = [[TodoList alloc] init];
   assert( [myList class] == [anotherList class] );
 }
 
-void instantiateObjects() {
-  TodoList* todoList1 = [TodoList alloc];  
-  [todoList1 showSize];  
+void allocInitAndProperties() {
+  TodoList* todoList1 = [TodoList alloc];
+  assert( todoList1.size == 0 );
 
-  TodoList* todoList2 = [TodoList alloc];
-  [todoList2 initSize];
-  [todoList2 showSize];
-
-  // [todoList1 release];
-  // [todoList2 release];
+  TodoList* todoList2 = [[TodoList alloc] init];
+  assert(todoList2.size == 1.0);
 }
 
 void versionOfClass() {
@@ -72,7 +63,7 @@ void versionOfClass() {
 }
 
 void unrecognizedSelector() {
-  TodoList* tList = [TodoList alloc];
+  TodoList* tList = [[TodoList alloc] init];
 
   // [tList someSelector];
 
@@ -101,7 +92,7 @@ void staticClassVar() {
 
   assert( 0 == [TodoList classMethodStaticVar] );
   // Fail: Calling instance method instead of class method
-  // TodoList* todoList = [TodoList alloc];
+  // TodoList* todoList = [[TodoList alloc] init];
   // assert( 0 == [todoList classMethodStaticVar] );
   
   assert( 1 == [TodoList classMethodStaticVar] );
@@ -131,21 +122,21 @@ void staticClassVar() {
 //   gcc -framework Foundation main.o TodoList.o Rectangle.o Square.o -o main
 
 void inheritanceAndOverriding() {
-  Rectangle* rect = [Rectangle alloc];
-  Rectangle* square = [Square alloc];
+  Rectangle* rect = [[Rectangle alloc] init];
+  Rectangle* square = [[Square alloc] init];
 
   assert( [square equalSides] );
   assert( ![rect equalSides] );
 }
 
 void classInitialization() {
-  Square* square = [Square alloc]; // call Class initialize
+  Square* square = [[Square alloc] init]; // call Class initialize
   assert( 1 == [Square getInitializedStaticVar] );
 }
 
 void idCanPointToAnyObject() {
-  Rectangle* rect = [Rectangle alloc];
-  Square* square = [Square alloc];
+  Rectangle* rect = [[Rectangle alloc] init];
+  Square* square = [[Square alloc] init];
   id rectAsId = rect;
   id squareAsId = square;
   assert( square == squareAsId );
@@ -193,15 +184,6 @@ void strings() {
     assert( [@"alpha" isEqualToString: [manipulatable lowercaseString]] );
 }
 
-void classFromString() {
-  id mysteryObject = [Rectangle alloc];
- 
-  NSString* classOfMysteryObject = [NSString alloc];
-  classOfMysteryObject = @"Rectangle";
-
-  assert( [mysteryObject isKindOfClass: NSClassFromString(classOfMysteryObject) ] );
-}
-
 @interface CartesianPoint : NSObject {
   float x;
   float y;
@@ -236,8 +218,8 @@ void inplaceClassDefinition() {
 -(float) combineTwo:(float)l Second:(float)r {
   return l * r;
 }
-
 @end
+
 void methodArgsCaseSensitive() {
   id c = [C new];
 
@@ -305,7 +287,6 @@ int main(int argc, char* argv[]) {
 
   nslog();
 
-  allocInitsToZero();
   unrecognizedSelector();
   idCanPointToAnyObject();
 
@@ -320,7 +301,7 @@ int main(int argc, char* argv[]) {
   testClassMembershipAndEquality();
   versionOfClass();
 
-  instantiateObjects();
+  allocInitAndProperties();
   methodArgsCaseSensitive();
   mutuallyDependentInterfaceFiles();
   staticClassVar();
