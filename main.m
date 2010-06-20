@@ -1,11 +1,23 @@
 
 #import <Foundation/Foundation.h>
 
+
 #import "Rectangle.h"
 #import "Square.h"
 #import "TodoList.h"
 
 #import "assert.h"
+
+
+
+// Fail: Use import instead - it prevents double includes on its own.
+// #include "Includable.h"
+// #include "Includable.h"
+#import "Includable.h"
+#import "Includable.h"
+#import "Includable.h"
+
+
 
 void nslog() {
   fprintf(stderr, "Demonstration of NSLog. It prints to STDERR:\n");
@@ -156,29 +168,82 @@ void classFromString() {
   float y;
 }
 
--(float) setX: (float)x y:(float)y;
+-(id) setX: (float)x y:(float)y;
 @end
 
 @implementation CartesianPoint
--(float) setX: (float)ax y:(float)ay {
+-(id) setX: (float)ax y:(float)ay {
   x = ax;
   y = ay;
+  return self;
 }
 @end
 void inplaceClassDefinition() {
   CartesianPoint *c = [[CartesianPoint alloc] init];
-  [c setX:(1.0) y:(2.0)];
+  id cAgain = [c setX:(1.0) y:(2.0)];
+  assert( cAgain == c );
 }
 
 
-#import <objc/Object.h>
-@interface A : Object {} @end
-@implementation A @end
-void nsObjectIsntObjectiveC() {
-  // why doesn't this work?
-  // A *a = [A new];
+@interface C : NSObject {}
+-(float) combineTwo:(float)l second:(float)r;
+-(float) combineTwo:(float)l Second:(float)r;
+@end
+
+@implementation C
+-(float) combineTwo:(float)l second:(float)r {
+  return l + r;
+}
+-(float) combineTwo:(float)l Second:(float)r {
+  return l * r;
 }
 
+@end
+void methodArgsCaseSensitive() {
+  id c = [C new];
+
+  // Fail:
+  // warning: no '-combineTwo:sEcond:' method found
+  // assert( 3.0 == [c combineTwo:1.0 sEcond:2.0] );
+
+  assert( 3.0 == [c combineTwo:1.0 second:2.0] );
+  assert( 2.0 == [c combineTwo:1.0 Second:2.0] );
+}
+
+@interface D : NSObject {}
+-(float) reduce:group, ...;
+@end
+
+@implementation D
+-(float) reduce:group, ... {
+  return 1.0;
+}
+
+@end
+
+void variableArguments() {
+  D *d = [[D alloc] init];
+  [d reduce:2.0, 3.0 ];
+}
+
+// #import <objc/Object.h>
+// @interface A : Object {} @end
+// @implementation A @end
+// void nsObjectIsntObjectiveC() {
+//   // why doesn't this work?
+//   // A *a = [A new];
+// }
+
+#import "Fa.h"
+#import "Fb.h"
+void mutuallyDependentInterfaceFiles() {
+  Fa *fa = [[Fa alloc] init];
+  Fb *fb = [[Fb alloc] init];
+
+  [fa setFb:fb];
+}
+
+void variableArgLists
 
 int main(int argc, char* argv[]) {
   NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
@@ -195,9 +260,15 @@ int main(int argc, char* argv[]) {
   idCanPointToAnyObject();
   classFromString();
   stringTypes();
+  
+  
 
 
   inplaceClassDefinition();
+  methodArgsCaseSensitive();
+  variableArguments();
+  mutuallyDependentInterfaceFiles();
+  variableArgLists();
 
   //nsObjectIsntObjectiveC();
   
