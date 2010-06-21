@@ -7,7 +7,7 @@ static NSInteger classStaticVariable;
 
 @implementation TodoList
 
-@synthesize size;
+@synthesize size, yesterday;
 
 + (NSInteger)classMethodStaticVar {
   return classStaticVariable++;
@@ -20,6 +20,12 @@ static NSInteger classStaticVariable;
 - (void)doIsa {
   Class classObj = [TodoList class];
   assert( isa == classObj );
+}
+
+-(void)copyYesterdayToToday {
+  if( yesterday ) {
+    size = yesterday->size;
+  }
 }
 
 @end

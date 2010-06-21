@@ -134,6 +134,17 @@ void inheritanceAndOverriding() {
   assert( ![rect equalSides] );
 }
 
+void structurePointer() {
+  TodoList *t1 = [[TodoList alloc] init];
+  TodoList *dayBeforet1 = [[TodoList alloc] init];
+  
+  [dayBeforet1 setSize: 3.0];
+  [t1 setYesterday: dayBeforet1];
+  assert( 1.0 == [t1 size] );
+  [t1 copyYesterdayToToday];
+  assert( 3.0 == [t1 size] );
+}
+
 void classInitialization() {
   Square* square = [[Square alloc] init]; // call Class initialize
   assert( 1 == [Square getInitializedStaticVar] );
@@ -279,6 +290,73 @@ void mutuallyDependentInterfaceFiles() {
   [fa setFb:fb];
 }
 
+
+@interface G : NSObject {
+  NSInteger g0;
+@private
+  NSInteger g1;
+@protected
+  NSInteger g2;
+@public
+  NSInteger g3;
+}
+-(void)incrementAll;
+@end
+
+@implementation G
+
+-(void) incrementAll {
+  g0++;
+  g1++;
+  g2++;
+  g3++;
+}
+@end
+
+@interface GSubclass : G {} @end;
+@implementation GSubclass
+-(void)incrementAll {
+  g0++;
+  // Fail: g1++; instance variable ‘g1’ is declared private
+  g2++;
+  g3++;
+}
+@end
+
+@interface GContainer : NSObject {
+  G* g;
+}
+-(id)init;
+-(void)incrementAll;
+@end
+
+@implementation GContainer
+-(id)init {
+  g = [[G alloc] init];
+}
+-(void)incrementAll {
+  // Fail: g->g0++; instance variable ‘g0’ is declared protected
+  // Fail: g->g0++; instance variable ‘g1’ is declared private
+  // Fail: g->g1++; instance variable ‘g1’ is declared private
+  // Fail: g->g2++; instance variable ‘g2’ is declared protected
+  g->g3++;
+}
+@end
+
+instanceVariableVisibility() {
+  G* g = [[G alloc] init];
+  [g incrementAll];
+
+  G* gSubclass = [[GSubclass alloc] init];
+  [gSubclass incrementAll];
+
+  GContainer* gContainer = [[GContainer alloc] init];
+  [gContainer incrementAll];
+
+  // Public vars are accessible outside the class
+  g->g3++;
+}
+
 int main(int argc, char* argv[]) {
   NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 
@@ -293,6 +371,8 @@ int main(int argc, char* argv[]) {
   staticClassVar();
   classInitialization();
   inheritanceAndOverriding();
+  structurePointer();
+  instanceVariableVisibility();
  
   // Metaprogramming
   runtimeTypeInterrogation();
