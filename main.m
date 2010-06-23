@@ -5,10 +5,7 @@
 #import "Rectangle.h"
 #import "Square.h"
 #import "TodoList.h"
-
 #import "assert.h"
-
-
 
 // Fail: Use import instead - it prevents double includes on its own.
 // #include "Includable.h"
@@ -16,8 +13,6 @@
 #import "Includable.h"
 #import "Includable.h"
 #import "Includable.h"
-
-
 
 void nslog() {
   NSString *costValue = @"$100";
@@ -385,7 +380,6 @@ int main(int argc, char* argv[]) {
   strings();
 
   unrecognizedSelector();
-
 
   // 
   //nsObjectIsntObjectiveC();
