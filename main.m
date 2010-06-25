@@ -352,6 +352,189 @@ instanceVariableVisibility() {
   g->g3++;
 }
 
+
+/*
+  1defining a class
+    self/super: low/mid/high
+    calling init of superclass, first
+
+
+
+  2allocating and initialize objects
+
+    from class methods:
+    
+    newInstance = [[self alloc] init] // inheritance-friendly
+    fail: self = [[ClassName alloc] init]
+
+    init: it can return nil, which is why
+
+    dangerous (recall and talk about why)
+      a = A alloc
+      a init
+      a doSomething
+
+  3protocols
+
+    for when you want to declare an interface that CLIENTs
+    must use. honestly I don't see the point when you can just
+    declare your own interface and be done with it...lots of cerimony
+    for nothing.
+
+
+
+    // Formal protocol
+    @protocol MyProtocol
+      -(void) req
+    @optional
+      -(void) optional
+    @required
+      -(void) required again
+    @end
+
+    // Informal protocol declared as a category. appears to be the only
+    // way to declare such a protocol
+    @interface NSObject ( MyCategory )
+      -(void) optionalMethod
+      -(void) optionalMethod
+    @end
+
+
+    // instantiate a protocol object
+    id obj = @protocol( MyProtocol )
+
+
+    @protocol P1 { -(void) m1; }
+    @protocol P2 { -(void) m2; }
+    @interface ConformsToP1AndP2 : NSObject < P1, P2 > {}
+    // no need to redeclare m1 and m2, just implement them.
+
+
+    id obj = ...
+    [obj conformsToProtocol:@protocol(MyProtocol)]
+    // less code than many respondsToSelector; similar to
+    // isKindOfClass.
+    // class object also works with comformsToProtocol
+
+    static types on protocols, for type checks
+    id <Protocol1> obj1; // static protocol type checks on obj
+    MyClass obj2; // static class type checks on obj
+    MyClass <Protocol> obj3; // both
+
+
+    // protocols can be nested.
+    @protocol Protocol1 < Protocol2 > { ...
+
+    id <Protocol1 > obj; // obj also conforms to Protocol2; check with conformsToProtocol
+
+    can get tricky
+
+    @protocol BProtocol { ...
+    @protocol AProtocol < BProtocol > { ...
+
+    class B : NSObject  < BProtocol > {...
+    class A : B < AProtocol >
+    class C : NSObject < AProtocol > { ...
+
+    does B need to implement methods in the BProtocol? Yes
+    does A need to implement methods in the B protocol? no. it'll inherit
+    B's implementation of ten
+
+    does C need to implement methods in the B protocol?
+      A includes the B protocol, so any class that adopts
+      A must have an implementation for B.
+      C implements A.
+      C must have an implementation for B.
+      C doesn't have one. so, its implementation must implement the B methods.
+
+    note: respondsToProtocol can be met without formally declaring conformance
+
+    // can forward-declare protocols in the event of circular imports
+
+
+    // "real example": comformance to teh NSCopying protocol
+    @interface I : NSObject < NSCopying > {
+     // demonstrate con
+
+  4declared properties
+
+    @interface H {
+      float value;
+      BOOL fake;
+    }
+
+    @property (attr, [, attr] ) float value;
+    // -(float)value;
+    // -(void)setValueg:(float)newValue
+
+    @property (getter=isFake) BOOL fake;
+
+
+    @synthesize myProp=instanceVarName
+
+
+    @synthesize accompanies things in the implementation
+    readwrite(default), readonly
+    assign (simple assignment; acts like you dont own the obj)
+      vs retain (as if you're in charge of this object; calls release
+        on previous, and calls retain on incoming))
+
+	  is retain like ++referenceCount ?
+	  and release like --referenceCount ?
+        
+      vs copy (deep copy)
+        calls copy
+        prev value is sent release
+
+      must talk about memory programming
+        
+    atomic (default and not declared; requests the _internal lock) vs nonatomic (doesn't request locks)
+
+    __weak
+    __strong?
+
+    is the instance variable required to exist? will synthesize
+    create it? (after all, we declared properties here...)
+
+    is @dynamic required if you implement the get/setter methods anyway?
+    why bother? os @dynamic mutually exclusive with @synthesize?
+    it appears that @dynamic is the default value for a property.
+
+    you CAN @synthesize, but override, a setter, as in the case
+    of storing a mutableArray that will return an immutable as a copy
+
+    must redeclare propertiy attributes in whole EXCEPT readonly and readwrite
+
+
+    dealloc:
+      you can call release on the property, or,
+      on a modern runtime, you cannot access the variable
+      directly, so you cannot call release. the setter will call
+      release on the old variable. so, you can assign
+      nil, and depend on the synthesized setter
+      to call release for you.
+
+  5categories and extensions
+  6associative references
+  7fast eNUMBeration
+  8enablind static behavior
+  9selectors
+  0exception handling
+  1threading
+  2remote messaging
+  3using c++ with objctive C
+  appendx A: language summary
+  revision history
+
+
+  Memory Management Programming Guide for Cocoa:
+    make an example program the leaks ram on iphone, but not os x.
+    and how to avoid.
+
+1
+*/
+
+
 int main(int argc, char* argv[]) {
   NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 
