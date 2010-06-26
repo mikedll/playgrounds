@@ -505,7 +505,6 @@ instanceVariableVisibility() {
 
     must redeclare propertiy attributes in whole EXCEPT readonly and readwrite
 
-
     dealloc:
       you can call release on the property, or,
       on a modern runtime, you cannot access the variable
@@ -531,8 +530,28 @@ instanceVariableVisibility() {
     make an example program the leaks ram on iphone, but not os x.
     and how to avoid.
 
+  The Threading Programming Guide
+
 1
 */
+
+
+int pointlessRefCountingYouShouldntRelyOn() {
+  id obj = [[NSMutableString alloc] init];
+  assert( 1 == [obj retainCount] );
+
+  [obj retain];
+  [obj release];
+  assert( 1 == [obj retainCount] );
+
+  [obj retain];
+  assert( 2 == [obj retainCount] );
+
+  [obj release];
+  assert( 1 == [obj retainCount] );
+
+  [obj release];
+}
 
 
 int main(int argc, char* argv[]) {
@@ -551,8 +570,9 @@ int main(int argc, char* argv[]) {
   inheritanceAndOverriding();
   structurePointer();
   instanceVariableVisibility();
+  pointlessRefCountingYouShouldntRelyOn();
  
-  // Metaprogramming
+  // "Metaprogramming"
   runtimeTypeInterrogation();
   testClassMembershipAndEquality();
   versionOfClass();
