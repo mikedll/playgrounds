@@ -3,7 +3,10 @@ OBJS = main.o TodoList.o Rectangle.o Square.o Fb.o Fa.o CoreDataDemo.o
 FLAGS = -g -c
 
 MOMC = /Applications/Xcode.app/Contents/Developer/usr/bin/momc
-MOMC_OPTS = -XD_MOMC_SDKROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk -XD_MOMC_IOS_TARGET_VERSION=6.0  -MOMC_PLATFORMS iphonesimulator  -MOMC_PLATFORMS iphoneos  -XD_MOMC_TARGET_VERSION=10.6  
+
+# From XCode. Turns out we don't really need 'em.
+# MOMC_OPTS = -XD_MOMC_SDKROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk -XD_MOMC_IOS_TARGET_VERSION=6.0  -MOMC_PLATFORMS iphonesimulator  -MOMC_PLATFORMS iphoneos  -XD_MOMC_TARGET_VERSION=10.6  
+MOMC_OPTS = 
 
 all: runmain
 
