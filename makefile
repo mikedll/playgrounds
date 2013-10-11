@@ -1,32 +1,23 @@
 
-OBJS = Main.o TodoList.o Rectangle.o Square.o Fb.o Fa.o
+OBJS = main.o TodoList.o Rectangle.o Square.o Fb.o Fa.o CoreDataDemo.o
 FLAGS = -g -c
 
-all: main runmain
+all: runmain
 
-runmain:
+runmain: main
 	./main
 
-main: main.o $(OBJS)
-	gcc -framework Foundation $(OBJS) -o main
+SRC = $(wildcard *.m)
+OBJ = $(SRC:.m=.o)
 
-Fa.o: Fa.h Fa.m Fb.h 
-	gcc $(FLAGS) Fa.m
+main: $(OBJS)
+	gcc -framework Foundation -framework CoreData $(OBJS) -o main
 
-Fb.o: Fb.h Fb.m Fa.h 
-	gcc $(FLAGS) Fb.m
-
-main.o: main.m TodoList.h Rectangle.h Square.h Fb.h Fa.h
+main.o: $(SRC)
 	gcc $(FLAGS) main.m
 
-TodoList.o: TodoList.h TodoList.m
-	gcc $(FLAGS) TodoList.m
-
-Rectangle.o: Rectangle.h Rectangle.m
-	gcc $(FLAGS) Rectangle.m
-
-Square.o: Square.h Square.m
-	gcc $(FLAGS) Square.m
+%.o: %.m %.h
+	gcc $(FLAGS) $< -o $@
 
 clean:
 	rm -rf *.o main

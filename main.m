@@ -7,6 +7,8 @@
 #import "TodoList.h"
 #import "assert.h"
 
+#import "CoreDataDemo.h"
+
 // Fail: Use import instead - it prevents double includes on its own.
 // #include "Includable.h"
 // #include "Includable.h"
@@ -595,6 +597,9 @@ int main(int argc, char* argv[]) {
 
   // 
   //nsObjectIsntObjectiveC();
+
+  CoreDataDemo* coreDataDemo = [[CoreDataDemo alloc] init];
+  [coreDataDemo run];
   
   [pool drain];
   return 0;
