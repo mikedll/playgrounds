@@ -2,3 +2,4 @@
 main
 tmp/*
 coreDataDemo.mom
+db.sqlite
