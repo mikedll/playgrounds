@@ -53,6 +53,47 @@
     NSLog(@"Successfully opened the sqlite database with the persistent store coordinator.");
   }
 
+  NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] init];
+  [moc setPersistentStoreCoordinator:psc];
+
+  NSFetchRequest *request = [[NSFetchRequest alloc] init];
+  NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Event" inManagedObjectContext:moc];
+  [request setEntity:entityDescription];
+  [request setFetchLimit:100];
+
+  NSArray *events = [moc executeFetchRequest:request error:&error];
+  if(!events) {
+    NSLog(@"Some error occurred while executing the fetch request.");
+    return;
+  }
+
+  if([events count] > 0) {
+    NSLog(@"Found %d existing object(s) in the store.", [events count]);
+    [events enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL* stop) {
+        NSLog(@"Fetched an object having name=%@ and id=%d", [obj fullName], [obj objectID]);
+      }];
+  }
+  else { 
+    NSLog(@"Did not find objects in the store.");
+  }
+
+  Event *event = [NSEntityDescription insertNewObjectForEntityForName:@"Event" inManagedObjectContext:moc];
+  event.fullName = @"Rick Sanchez";
+
+  if([moc hasChanges]) {
+    NSLog(@"Has changed to save, so saving.");
+    if([moc save:&error]) {
+      NSLog(@"Successfully saved.");
+    }
+    else {
+      NSLog(@"Failed to save on managed object context.");
+    }
+  }
+  else {
+    NSLog(@"No changes to save, so not saving.");
+  }
+
+  NSLog(@"CoreData Demo complete.");
 }
 
 @end
