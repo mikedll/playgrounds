@@ -17,12 +17,12 @@
   }
   else {
     NSLog(@"Unable to locate fake local file. Something is probably wrong with this repo or code.");
+    return;
   }
 
-
   NSURL* modelUrl = [NSURL fileURLWithPath:@"./CoreDataDemo.momd"];
-  // NSManagedObjectModel* managedObjectModel = [NSManagedObjectModel initWithContentsOfURL:modelUrl];
-  // NSPersistentStoreCoordinator* persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel managedObjectModel];
+  NSManagedObjectModel* managedObjectModel = [NSManagedObjectModel initWithContentsOfURL:modelUrl];
+  NSPersistentStoreCoordinator* persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel managedObjectModel];
 }
 
 @end

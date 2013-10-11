@@ -1,3 +1,4 @@
 *.o
 main
 tmp/*
+coreDataDemo.mom
