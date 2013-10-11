@@ -2,6 +2,8 @@
 OBJS = main.o TodoList.o Rectangle.o Square.o Fb.o Fa.o CoreDataDemo.o
 FLAGS = -g -c
 
+MOMC = /Applications/Xcode.app/Contents/Developer/usr/bin/momc
+
 all: runmain
 
 runmain: main

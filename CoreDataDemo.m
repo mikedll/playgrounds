@@ -10,14 +10,17 @@
 -(void) run
 {
   NSFileManager* fileManager = [NSFileManager defaultManager];
-  if( [fileManager fileExistsAtPath:@"./db.sqlite"] == YES) {
-    NSLog(@"This worked.");
+
+
+  if( [fileManager fileExistsAtPath:@"./db.sqlite.fake"] == YES) {
+    NSLog(@"Able to locate a fake sqlite file successfully.");
   }
   else {
-    NSLog(@"Unable to locate local file.");
+    NSLog(@"Unable to locate fake local file. Something is probably wrong with this repo or code.");
   }
 
-  NSURL* modelUrl = [NSURL URLFromFilePath:@"./CoreDataDemo.momd"];
+
+  NSURL* modelUrl = [NSURL fileURLWithPath:@"./CoreDataDemo.momd"];
   // NSManagedObjectModel* managedObjectModel = [NSManagedObjectModel initWithContentsOfURL:modelUrl];
   // NSPersistentStoreCoordinator* persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel managedObjectModel];
 }
