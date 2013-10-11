@@ -195,6 +195,14 @@ void strings() {
     assert( [@"alpha" isEqualToString: [manipulatable lowercaseString]] );
 }
 
+void dictionaries() {
+  NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys: @"v1", @"k1", @"v2", @"k2", nil];
+
+  [dict enumerateKeysAndObjectsUsingBlock: ^(id key, id obj, BOOL *stop) {
+      NSLog(@"%@ = %@", key, obj);
+  }];
+}
+
 @interface CartesianPoint : NSObject {
   float x;
   float y;
@@ -581,6 +589,7 @@ int main(int argc, char* argv[]) {
 
   // Libraries
   strings();
+  dictionaries();
 
   unrecognizedSelector();
 
