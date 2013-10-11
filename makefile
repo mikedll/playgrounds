@@ -1,7 +1,5 @@
 
-OBJS = main.o TodoList.o Rectangle.o Square.o Fb.o Fa.o CoreDataDemo.o
 FLAGS = -g -c
-
 MOMC = /Applications/Xcode.app/Contents/Developer/usr/bin/momc
 
 # From XCode. Turns out we don't really need 'em.
@@ -10,11 +8,12 @@ MOMC_OPTS =
 
 all: runmain
 
-runmain: main datamodel
+runmain: main coreDataDemo.mom
 	./main
 
 SRC = $(wildcard *.m)
-OBJ = $(SRC:.m=.o)
+OBJS = $(SRC:.m=.o)
+HEADERS = $(filter-out main.h,$(SRC:.m=.h))
 
 #
 # Gotcha: momc requires absolute path of output .mom file
@@ -25,8 +24,8 @@ coreDataDemo.mom: coreDataDemo.xcdatamodeld/1.xcdatamodel/contents
 main: $(OBJS)
 	gcc -framework Foundation -framework CoreData $(OBJS) -o main
 
-main.o: $(SRC)
-	gcc $(FLAGS) main.m
+main.o: main.m $(HEADERS) 
+	gcc $(FLAGS) $<
 
 %.o: %.m %.h
 	gcc $(FLAGS) $< -o $@
