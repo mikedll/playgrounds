@@ -6,10 +6,20 @@ MOMC = /Applications/Xcode.app/Contents/Developer/usr/bin/momc
 # MOMC_OPTS = -XD_MOMC_SDKROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk -XD_MOMC_IOS_TARGET_VERSION=6.0  -MOMC_PLATFORMS iphonesimulator  -MOMC_PLATFORMS iphoneos  -XD_MOMC_TARGET_VERSION=10.6  
 MOMC_OPTS = 
 
-all: runmain
+all: runcantfindmodelforsourcestore
 
-runmain: main coreDataDemo.mom
+runall: runcantfindmodelforsourcestore runCoreDataDemo runmain
+
+runcantfindmodelforsourcestore: main coreDataDemo.mom coreDataDemoBlank.mom 
+	rm -f ./cantFindModelForSourceStoreDb.sqlite
+	./main coreDataDemoCantFindModel
+
+runCoreDataDemo: main coreDataDemo.mom
+	./main coreDataDemo
+
+runmain: main
 	./main
+
 
 SRC = $(wildcard *.m)
 OBJS = $(SRC:.m=.o)
@@ -21,6 +31,9 @@ HEADERS = $(filter-out main.h,$(SRC:.m=.h))
 coreDataDemo.mom: coreDataDemo.xcdatamodeld/1.xcdatamodel/contents
 	$(MOMC) $(MOMC_OPTS) coreDataDemo.xcdatamodeld $(PWD)/$@
 
+coreDataDemoBlank.mom: coreDataDemoBlank.xcdatamodeld/blank.xcdatamodel/contents
+	$(MOMC) $(MOMC_OPTS) coreDataDemoBlank.xcdatamodeld $(PWD)/$@
+
 main: $(OBJS)
 	gcc -framework Foundation -framework CoreData $(OBJS) -o main
 
@@ -31,6 +44,6 @@ main.o: main.m $(HEADERS)
 	gcc $(FLAGS) $< -o $@
 
 clean:
-	rm -rf *.o main coreDataDemo.mom
+	rm -rf *.o main coreDataDemo.mom coreDataDemoBlank.mom 
 
 

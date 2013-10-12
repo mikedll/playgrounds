@@ -14,4 +14,6 @@
 
 -(void) run;
 
+-(void) reproduceCantFindModelForSourceStore;
+
 @end

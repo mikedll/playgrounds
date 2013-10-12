@@ -2,4 +2,6 @@
 main
 tmp/*
 coreDataDemo.mom
+coreDataDemoBlank.mom
 db.sqlite
+cantFindModelForSourceStoreDb.sqlite

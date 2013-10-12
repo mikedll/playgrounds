@@ -203,6 +203,8 @@ void dictionaries() {
   [dict enumerateKeysAndObjectsUsingBlock: ^(id key, id obj, BOOL *stop) {
       NSLog(@"%@ = %@", key, obj);
   }];
+
+  assert( [dict objectForKey:@"k1"] == @"v1");
 }
 
 @interface CartesianPoint : NSObject {
@@ -567,6 +569,22 @@ int pointlessRefCountingYouShouldntRelyOn() {
 int main(int argc, char* argv[]) {
   NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 
+  if(argc == 2) {
+    NSString* cmd = [NSString stringWithUTF8String:argv[1]];
+    if([cmd isEqualToString:@"coreDataDemoCantFindModel"]) {
+      CoreDataDemo* coreDataDemo = [[CoreDataDemo alloc] init];
+      [coreDataDemo reproduceCantFindModelForSourceStore];
+    }
+    else if ([cmd isEqualToString:@"coreDataDemo"]) {
+      NSLog(@"Running coreDataDemo.");
+      CoreDataDemo* coreDataDemo = [[CoreDataDemo alloc] init];
+      [coreDataDemo run];
+    }
+    else {
+      NSLog(@"Unrecognized cmd: %@", cmd);
+    }
+    return;
+  }
   nslog();
 
   // OO and basic ObjC
@@ -597,9 +615,6 @@ int main(int argc, char* argv[]) {
 
   // 
   //nsObjectIsntObjectiveC();
-
-  CoreDataDemo* coreDataDemo = [[CoreDataDemo alloc] init];
-  [coreDataDemo run];
   
   [pool drain];
   return 0;

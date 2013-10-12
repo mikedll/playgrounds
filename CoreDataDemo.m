@@ -1,4 +1,5 @@
 
+#import "assert.h"
 #import "CoreDataDemo.h"
 
 @implementation Event
@@ -6,6 +7,93 @@
 @end
 
 @implementation CoreDataDemo
+
+-(void) reproduceCantFindModelForSourceStore
+{
+  NSFileManager* fileManager = [NSFileManager defaultManager];
+  NSString* dbName = @"cantFindModelForSourceStoreDb.sqlite";
+  NSURL *storeUrl = [NSURL fileURLWithPath:[NSString stringWithFormat:@"./%@", dbName]];
+
+  NSURL *emptyModelUrl = [NSURL fileURLWithPath:@"./coreDataDemoBlank.mom"];
+  NSURL *nonEmptyModelUrl = [NSURL fileURLWithPath:@"./coreDataDemo.mom"];
+
+  NSLog(@"Looking for .mom managed object model in %@", [emptyModelUrl path]);
+  NSManagedObjectModel* emptyMom = [[NSManagedObjectModel alloc] initWithContentsOfURL:emptyModelUrl];
+
+
+  NSError* error;
+  NSPersistentStoreCoordinator *psc = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:emptyMom];
+
+
+  // Load up empty model and add store with it, thereby creating empty sqlite db
+  if([fileManager fileExistsAtPath:[storeUrl path]]) {
+    NSLog(@"Existing db at %@. Need to start without it for this test to work.", [storeUrl path]);
+    return;
+  }
+  else if(![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:nil error:&error]) {
+    NSLog(@"Failed to create sqlite database.");
+  }
+  else if([fileManager fileExistsAtPath:[storeUrl path]]) {
+    NSLog(@"Successfully created sqlite database with empty schema. Metadata:");
+
+    // Print metadata of store    
+    NSDictionary *sourceMetaData = [NSPersistentStoreCoordinator metadataForPersistentStoreOfType:NSSQLiteStoreType
+                                                                                              URL:storeUrl
+                                                                                            error:&error];
+      if(sourceMetaData) {
+        [sourceMetaData enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) { 
+            NSLog(@"metadata key %@: %@", key, obj); 
+          }];
+      }
+      else {	
+        NSLog(@"Unable to locate metadata for sqlite.");
+      }
+
+  }
+  else {
+    NSLog(@"Something went wrong. Call to addPersistenceStoreWithType succeeded, but resulting sqlite database was not found.");
+  }
+
+  // Load up non-empty model. re-add the store withno automigrate options
+  // Expect "The model used to open the store is incompatible with the one used to create the store"
+  NSLog(@"Looking for nonEmpty .mom managed object model in %@", [nonEmptyModelUrl path]);
+  NSManagedObjectModel* nonEmptyMom = [[NSManagedObjectModel alloc] initWithContentsOfURL:nonEmptyModelUrl];
+
+  NSPersistentStoreCoordinator *psc2 = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:nonEmptyMom];
+
+  if(![psc2 addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:nil error:&error]) {
+    NSString* expectedError1 = @"The model used to open the store is incompatible with the one used to create the store";
+    NSLog(@"As expected, failed to add persistence store.");
+    assert([[[error userInfo] objectForKey:@"reason"] 
+             isEqualToString:
+               expectedError1]);
+    NSLog(@"Got error reason: \"%@\"", expectedError1);
+
+    // Review: check what happens if options are present. See if we get the 2nd type of error.
+    // consistently...if so, they can be removed as a cause.
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, 
+                                              [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, 
+                                          nil];
+
+  
+    
+    NSPersistentStoreCoordinator *psc3 = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:nonEmptyMom];
+    if(![psc3 addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
+      NSLog(@"As expected, failed to add persistence store with auto-migration options.");
+      NSLog(@"Error %@, %@", error, [error userInfo]);
+      assert([[[error userInfo] objectForKey:@"reason"]
+               isEqualToString:
+                 @"class"]);
+    }
+    else {
+      NSLog(@"Expected error, but did not get one while automigrating.");
+    }
+  }
+  else {
+    NSLog(@"Expected error, but did not get error while adding persistence store of nonblank MOM schema to blank database.");
+  }
+}
 
 -(void) run
 {
@@ -19,7 +107,8 @@
     return;
   }
 
-  NSURL *modelUrl = [NSURL fileURLWithPath:@"./CoreDataDemo.mom"];
+  // Load Managed Object Model
+  NSURL *modelUrl = [NSURL fileURLWithPath:@"./coreDataDemo.mom"];
 
   NSString *urlString = [modelUrl absoluteString];
   NSLog(@"Looking for .mom managed object model at URL: %@", urlString);
@@ -37,11 +126,12 @@
 
   NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
 
-  if([fileManager fileExistsAtPath:[storeUrl absoluteString]]) {
-    NSLog(@"Note that database file already exists at: %@", [storeUrl absoluteString]);
+  NSString* storePath = [storeUrl path];
+  if([fileManager fileExistsAtPath:storePath]) {
+    NSLog(@"Note that database file already exists at: %@", storePath);
   }
   else {
-    NSLog(@"No database yet exists at %@", [storeUrl absoluteString]);
+    NSLog(@"No database yet exists at %@", storePath);
   }
 
   NSError *error;
