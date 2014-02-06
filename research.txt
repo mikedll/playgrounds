@@ -192,4 +192,29 @@
    SecItemAdd
    SecItemCopyMatching
 
+   SecKeychainItemFreeContent // frees what was allocated, appears to only be needed on OS X, not on iOS.
+
+   The Keychain utility can be used to lock or unlock keychains.
+   It easily shows what types of things can be on the keychain.
+   It shows which keychains are locked or unlocked. "login"
+   seems to be the default keychain.
+
+   note: ios only has 1 keychain and it never locks.
+
+   also, i think backups of an iphone do not easily grant
+   the holder of the backup, access to the contents of passwords.
+
+   you have to get familiar with all the functions provided
+   by keychain services, and with CDSA and CSSM.
+
+   you should probably only try to remember a password
+   after a successful login attempt by the user, to prevent
+   yourself from saving a bad password.
+
+   - be sure to use the same provisioning profile across different
+     versions of your application.
+
+   "the example code from apple is *terrible*"
+   http://stackoverflow.com/questions/19284063/secitemcopymatching-returns-nil-data   
+
 */
