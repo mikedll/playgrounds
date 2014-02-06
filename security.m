@@ -1,13 +1,3 @@
-#import "AppDelegate.h"
-#import "Security/Security.h"
-#import "MobileCoreServices/MobileCoreServices.h"
-
-@implementation AppDelegate
-
-@synthesize managedObjectContext = _managedObjectContext;
-@synthesize managedObjectModel = _managedObjectModel;
-@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
-
 static const UInt8 kKeychainItemIdentifier[] = "com.TestApp1.KeychainUI";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -55,6 +45,24 @@ static const UInt8 kKeychainItemIdentifier[] = "com.TestApp1.KeychainUI";
     }
   } else {
     NSLog(@"Found an item.");
+
+    NSMutableDictionary* dataSearchQuery = [searchQuery mutableCopy];
+    [dataSearchQuery removeObjectForKey:(__bridge id)kSecReturnAttributes];
+    [dataSearchQuery setObject:(__bridge id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
+    
+    CFTypeRef dataReturnedRef = nil;
+    keychainErr = SecItemCopyMatching((__bridge CFDictionaryRef)dataSearchQuery, &dataReturnedRef);
+    NSData* dataReturned = (__bridge NSData*)dataReturnedRef;
+    
+    if(keychainErr == noErr) {
+      NSLog(@"Password is: %@", [[NSString alloc] initWithData:dataReturned encoding:NSUTF8StringEncoding]);
+    }
+    else {
+      NSLog(@"Error while fetching data of the item.");
+    }
+    
+    
+    
     
     NSDictionary* dictAttributesReturned = (__bridge_transfer NSDictionary*)attributesReturned;
     [dictAttributesReturned enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
@@ -66,18 +74,18 @@ static const UInt8 kKeychainItemIdentifier[] = "com.TestApp1.KeychainUI";
     NSDictionary* updatableQuery = [NSDictionary dictionaryWithObjectsAndKeys:
                                     (__bridge id)kSecClassGenericPassword, (__bridge id) kSecClass,
                                     keychainItemID, (__bridge id)kSecAttrGeneric,
-                                    kSecMatchLimitOne, kSecMatchLimit,
-                                    kCFBooleanTrue, kSecReturnAttributes,
                                     nil];
 
-    NSMutableDictionary* updatedItem = [dictAttributesReturned mutableCopy];
-    NSString* updatedPassword = @"updatedPassword.";
-    [updatedItem setObject:[updatedPassword dataUsingEncoding:NSUTF8StringEncoding] forKey:(__bridge id)kSecValueData];
-    
+    NSDictionary* updatedItem = [NSDictionary dictionaryWithObjectsAndKeys:
+                                 [@"updatedPassword." dataUsingEncoding:NSUTF8StringEncoding], (__bridge id)kSecValueData,
+                                 nil];
     
     keychainErr = SecItemUpdate((__bridge CFDictionaryRef) updatableQuery, (__bridge CFDictionaryRef) updatedItem);
     if(keychainErr == noErr) {
       NSLog(@"Update successful.");
+    }
+    else if(keychainErr == errSecParam) {
+      NSLog(@"Update encountered a bad paramter.");
     }
     else {
       NSLog(@"Update failed with result %ld", keychainErr);
@@ -86,9 +94,6 @@ static const UInt8 kKeychainItemIdentifier[] = "com.TestApp1.KeychainUI";
   }
 
   NSLog(@"all done.");
-
-//  int didFree = SecKeychainItemFreeContent(result2);
-//  SecKeychainItemFreeContent(result2);
 
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   // Override point for customization after application launch.
