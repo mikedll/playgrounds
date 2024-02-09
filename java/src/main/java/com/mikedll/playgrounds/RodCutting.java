@@ -74,7 +74,9 @@ public class RodCutting {
       sizeUsed += lengths[i];
     }
     
-    // special case: final length in the list of cuts    
+    // special case: final length in the list of lengths.
+    // it is determined to be a single value. no need for
+    // for loop.
     if(offset == lengths.length-1) {
       int[] myLengths = new int[lengths.length];
       for(int i=0; i<offset; i++) {
