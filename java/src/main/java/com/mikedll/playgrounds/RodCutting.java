@@ -57,11 +57,6 @@ public class RodCutting {
   
   public static void examineAfter(int originalRodLength, List<List<Integer>> possibilities, 
                                   int[] lengths, int offset, int remainingRodLength) {
-
-    int sizeUsed = 0;
-    for(int i=0; i<offset; i++) {
-      sizeUsed += lengths[i];
-    }      
     
     if(offset > lengths.length) {
       throw new RuntimeException("offset of " + offset + " is greater than lengths size of " + lengths.length);
@@ -74,6 +69,11 @@ public class RodCutting {
       return;
     }
 
+    int sizeUsed = 0;
+    for(int i=0; i<offset; i++) {
+      sizeUsed += lengths[i];
+    }
+    
     // special case: final length in the list of cuts    
     if(offset == lengths.length-1) {
       int[] myLengths = new int[lengths.length];
