@@ -176,7 +176,7 @@
                             <goal>java</goal>
                         </goals>
                         <configuration>
-                            <mainClass>com.mikedll.codetours.Main</mainClass>
+                            <mainClass>com.mikedll.playgrounds.Main</mainClass>
                             <includePluginDependencies>true</includePluginDependencies>
                         </configuration>
                     </execution>
@@ -186,7 +186,16 @@
                             <goal>java</goal>
                         </goals>
                         <configuration>
-                            <mainClass>com.mikedll.codetours.DirWalk</mainClass>
+                            <mainClass>com.mikedll.playgrounds.DirWalk</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>RodCutting</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.mikedll.playgrounds.RodCutting</mainClass>
                         </configuration>
                     </execution>
                 </executions>

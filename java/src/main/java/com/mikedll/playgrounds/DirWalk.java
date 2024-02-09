@@ -1,4 +1,4 @@
-package com.mikedll.codetours;
+package com.mikedll.playgrounds;
 
 import java.io.File;
 import java.util.Arrays;
