@@ -25,11 +25,7 @@ public class RodCuttingTests {
   
   public void test(int[] rodValues, Integer expected, int rodLength) {
     RodCutting rodCutting = new RodCutting();
-    Pair<List<List<Integer>>, Map<List<Integer>, Integer>> result = rodCutting.run(rodValues, rodLength);
-    List<List<Integer>> optimal = result.getValue0();
-    Map<List<Integer>, Integer> possibilityToValue = result.getValue1();
-    for(List<Integer> el : optimal) {
-      Assertions.assertEquals(expected, possibilityToValue.get(el));      
-    }    
+    Pair<List<List<Integer>>, RodCutting.MyInteger> result = rodCutting.run(rodValues, rodLength);
+    Assertions.assertEquals(expected, result.getValue1().value);
   }
 }
