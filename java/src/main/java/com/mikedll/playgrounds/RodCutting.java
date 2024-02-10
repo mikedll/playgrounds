@@ -44,13 +44,13 @@ public class RodCutting {
     List<List<Integer>> optimal = new ArrayList<>();
     for(int numCuts = 0; numCuts < rodLength; numCuts++) {        
       List<Integer> lengths = Arrays.asList(new Integer[numCuts+1]);
-      buildSetFrom(rodLength, rodValues, optimal, lengths, 0, rodLength, bestValue);
+      buildSeqFrom(rodLength, rodValues, optimal, lengths, 0, rodLength, bestValue);
     }
     
     return Pair.with(optimal, bestValue);
   }
   
-  public void buildSetFrom(int originalRodLength, int[] rodValues, List<List<Integer>> optimal, 
+  public void buildSeqFrom(int originalRodLength, int[] rodValues, List<List<Integer>> optimal, 
                            List<Integer> lengths, int offset, int remainingRodLength, MyInteger bestValue) {
     
     if(offset > lengths.size()) {
@@ -79,7 +79,7 @@ public class RodCutting {
     for(int i=1; i<originalRodLength - sizeUsed; i++) {
       List<Integer> myLengths = new ArrayList<>(lengths);
       myLengths.set(offset, i);
-      buildSetFrom(originalRodLength, rodValues, optimal, myLengths, offset+1, remainingRodLength-i, bestValue);
+      buildSeqFrom(originalRodLength, rodValues, optimal, myLengths, offset+1, remainingRodLength-i, bestValue);
     }
   }
   
