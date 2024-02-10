@@ -28,5 +28,6 @@ public class RodCuttingTests {
     Pair<List<List<Integer>>, RodCutting.MyInteger> result = rodCutting.run(rodValues, rodLength);
     Assertions.assertEquals(expected, result.getValue1().value, "set enumeration method");    
     Assertions.assertEquals(expected, rodCutting.easyWork(rodValues, rodLength), "dynamic programming method");
+    Assertions.assertEquals(expected, rodCutting.easierYetWork(rodValues, rodLength), "dynamic programming method II");
   }
 }
