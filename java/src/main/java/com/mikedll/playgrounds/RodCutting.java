@@ -1,6 +1,7 @@
 package com.mikedll.playgrounds;
 
 import java.lang.Math;
+import java.util.Random;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,18 +13,38 @@ import org.javatuples.Pair;
 
 public class RodCutting {
   
+  // mvn compile exec:java@RodCutting -Dexec.args="large"
   public static void main(String[] args) {
-    System.out.println("Hello args length=" + args.length);
-
     int[] rodValues = new int[] { 1, 5, 8, 9, 10, 17, 17, 20, 24, 30 };
+    if(args.length > 0 && args[0].equals("large")) {
+      rodValues = new int[40];
+      rodValues[0] = 1;
+      Random rand = new Random();
+      for(int i=1; i<rodValues.length; i++) {
+        rodValues[i] = rodValues[i-1] + rand.nextInt(5);
+      }
+    }
     
     RodCutting rodCutting = new RodCutting();
-    for(int i=1; i<=rodValues.length; i++) {
-      int value = rodCutting.easyWork(rodValues, i);
-      int easiserYet = rodCutting.easierYetWork(rodValues, i);
-      System.out.println("Optimal for length " + i + ": " + value + ", via easier yet=" + easiserYet);
+    int value = rodCutting.easyWork(rodValues, rodValues.length);
+    System.out.println("Easy work " + value);
+    int easierYet = rodCutting.easierYetWork(rodValues, rodValues.length);
+    System.out.println("Easier yet work: " + easierYet);
+    int recursiveAnswer = rodCutting.recursive(rodValues, rodValues.length);
+    System.out.println("Recursive: " + recursiveAnswer);
+    
+    // rodCutting.hardWork(rodValues);    
+  }
+  
+  public int recursive(int[] rodValues, int n) {
+    if(n == 0) return 0;
+    
+    int q = -1;
+    for(int i=1; i<=n; i++) {
+      q = Math.max(q, rodValues[i-1] + recursive(rodValues,n-i));
     }
-    rodCutting.hardWork(rodValues);
+    
+    return q;
   }
   
   // r_n = max{p_i + r_(n-i): 1<=i<=n}
@@ -33,8 +54,8 @@ public class RodCutting {
     for(int i=2; i<=soughtLength; i++) {
       for(int j=1; j<=i; j++) {
         int p_j = rodValues[j-1];
-        int r_n_minus_j = j == i ? 0 : optimal[i-j-1];
-        int thisCut = p_j + r_n_minus_j;
+        int r_i_minus_j = j == i ? 0 : optimal[i-j-1];
+        int thisCut = p_j + r_i_minus_j;
         optimal[i-1] = Math.max(optimal[i-1], thisCut);
       }
     }
