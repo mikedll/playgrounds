@@ -17,10 +17,34 @@ public class RodCutting {
     int[] rodValues = new int[] { 1, 5, 8, 9, 10, 17, 17, 20, 24, 30 };
     
     RodCutting rodCutting = new RodCutting();
-    
+    for(int i=1; i<=rodValues.length; i++) {
+      int value = rodCutting.easyWork(rodValues, i);
+      System.out.println("Optimal for length " + i + ": " + value);
+    }
+    rodCutting.hardWork(rodValues);
+  }
+  
+  public int easyWork(int[] rodValues, int soughtLength) {
+    int[] optimal = new int[rodValues.length];
+    optimal[0] = rodValues[0];
+    for(int rodLength = 2; rodLength <= soughtLength; rodLength++) {
+      int halfWay = rodValues.length % 2 == 0 ? rodLength/2 : (rodLength+1)/2;
+      for(int i = 0; i<=halfWay; i++) {
+        int leftLength = i;
+        int rightLength = rodLength-i;
+        int thisCutValue = i == 0 ? rodValues[rightLength-1] : (optimal[leftLength-1] + optimal[rightLength-1]);
+        if(thisCutValue > optimal[rodLength-1]) {
+          optimal[rodLength-1] = thisCutValue;
+        }
+      }
+    }
+    return optimal[soughtLength-1];
+  }
+  
+  public void hardWork(int[] rodValues) {
     for(int rodLength = 1; rodLength <= rodValues.length; rodLength++) {
       System.out.println("r_" + rodLength + ": ");
-      Pair<List<List<Integer>>, MyInteger> result = rodCutting.run(rodValues, rodLength);
+      Pair<List<List<Integer>>, MyInteger> result = run(rodValues, rodLength);
       List<List<Integer>> optimal = result.getValue0();
       MyInteger optimalValue = result.getValue1();
       

@@ -26,6 +26,7 @@ public class RodCuttingTests {
   public void test(int[] rodValues, Integer expected, int rodLength) {
     RodCutting rodCutting = new RodCutting();
     Pair<List<List<Integer>>, RodCutting.MyInteger> result = rodCutting.run(rodValues, rodLength);
-    Assertions.assertEquals(expected, result.getValue1().value);
+    Assertions.assertEquals(expected, result.getValue1().value, "set enumeration method");    
+    Assertions.assertEquals(expected, rodCutting.easyWork(rodValues, rodLength), "dynamic programming method");
   }
 }
