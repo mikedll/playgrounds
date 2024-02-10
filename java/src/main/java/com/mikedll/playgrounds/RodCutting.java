@@ -38,11 +38,10 @@ public class RodCutting {
   }
 
   public Pair<List<List<Integer>>, Map<List<Integer>,Integer>> run(int[] rodValues, int rodLength) {
-    // Get possible cuts
+    // For cut-counts, generate all possible lengths
     List<List<Integer>> possibilities = new ArrayList<>();
     for(int numCuts = 0; numCuts < rodLength; numCuts++) {        
       List<Integer> lengths = Arrays.asList(new Integer[numCuts+1]);
-      // int[] lengths = new int[numCuts+1];
       examineAfter(rodLength, possibilities, lengths, 0, rodLength);
     }
     
@@ -78,10 +77,7 @@ public class RodCutting {
       return;
     }
 
-    int sizeUsed = 0;
-    for(int i=0; i<offset; i++) {
-      sizeUsed += lengths.get(i);
-    }
+    int sizeUsed = lengths.subList(0, offset).stream().reduce(0, Integer::sum);
     
     // special case: final length in the list of lengths.
     // it is determined to be a single value. no need for
@@ -93,12 +89,10 @@ public class RodCutting {
       return;
     }
 
-    for(int i=1; i<=originalRodLength; i++) {
-      if((sizeUsed + i) < originalRodLength) {
-        List<Integer> myLengths = new ArrayList<>(lengths);
-        myLengths.set(offset, i);
-        examineAfter(originalRodLength, possibilities, myLengths, offset+1, remainingRodLength-i);
-      }
+    for(int i=1; i<originalRodLength - sizeUsed; i++) {
+      List<Integer> myLengths = new ArrayList<>(lengths);
+      myLengths.set(offset, i);
+      examineAfter(originalRodLength, possibilities, myLengths, offset+1, remainingRodLength-i);
     }
   }
 }
