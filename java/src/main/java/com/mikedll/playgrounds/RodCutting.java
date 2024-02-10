@@ -49,10 +49,7 @@ public class RodCutting {
     Integer bestValue = null;
     Map<List<Integer>,Integer> possibilityToValue = new HashMap<>();
     for(List<Integer> possibility : possibilities) {
-      int value = 0;
-      for(Integer cutLength : possibility) {
-        value += rodValues[cutLength-1];
-      }
+      int value = possibility.stream().map(v -> rodValues[v-1]).reduce(0, Integer::sum);
       possibilityToValue.put(possibility, value);
       if(bestValue == null || value > bestValue) {
         bestValue = value;

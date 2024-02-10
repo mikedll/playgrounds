@@ -11,9 +11,16 @@ public class RodCuttingTests {
   @Test
   public void testBasics() {
     int[] rodValues = new int[] { 1, 5, 8, 9, 10, 17, 17, 20, 24, 30 };
+    test(rodValues, 1, 1);
     test(rodValues, 5, 2);
+    test(rodValues, 8, 3);
+    test(rodValues, 10, 4);
+    test(rodValues, 13, 5);
+    test(rodValues, 17, 6);
+    test(rodValues, 18, 7);
     test(rodValues, 22, 8);
     test(rodValues, 25, 9);
+    test(rodValues, 30, 10);
   }
   
   public void test(int[] rodValues, Integer expected, int rodLength) {
