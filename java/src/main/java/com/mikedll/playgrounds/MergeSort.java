@@ -34,7 +34,7 @@ public class MergeSort {
     int lenRight = r-q;
     int[] left = new int[lenLeft];
     int[] right = new int[lenRight];
-    
+        
     for(int i=0; i<lenLeft; i++) {
       left[i] = input[p+i];
     }
