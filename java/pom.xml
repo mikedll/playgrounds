@@ -198,6 +198,15 @@
                             <mainClass>com.mikedll.playgrounds.RodCutting</mainClass>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>MergeSort</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.mikedll.playgrounds.MergeSort</mainClass>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
