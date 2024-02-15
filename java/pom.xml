@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.mikedll</groupId>
-    <artifactId>codetours</artifactId>
+    <artifactId>playgrounds</artifactId>
     <packaging>jar</packaging>
     <version>0.1.0</version>
 
@@ -214,6 +214,15 @@
                         </goals>
                         <configuration>
                             <mainClass>com.mikedll.playgrounds.InsertionSort</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>AddBinaryIntegers</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.mikedll.playgrounds.AddBinaryIntegers</mainClass>
                         </configuration>
                     </execution>
                 </executions>
