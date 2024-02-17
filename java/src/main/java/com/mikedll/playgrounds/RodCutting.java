@@ -28,8 +28,8 @@ public class RodCutting {
     RodCutting rodCutting = new RodCutting();
     int value = rodCutting.easyWork(rodValues, rodValues.length);
     System.out.println("Easy work " + value);
-    int easierYet = rodCutting.easierYetWork(rodValues, rodValues.length);
-    System.out.println("Easier yet work: " + easierYet);
+    int memoizedBottomUp = rodCutting.memoizedBottomUp(rodValues, rodValues.length);
+    System.out.println("memoizedBottomUp: " + memoizedBottomUp);
     int simpleRecursive = rodCutting.simpleRecursive(rodValues, rodValues.length);
     System.out.println("Naive Recursive: " + simpleRecursive);
     int memoizedTopDown = rodCutting.memoizedTopDown(rodValues, rodValues.length);
@@ -76,18 +76,17 @@ public class RodCutting {
   }
   
   // r_n = max{p_i + r_(n-i): 1<=i<=n}
-  public int easierYetWork(int[] rodValues, int soughtLength) {
-    int[] optimal = new int[soughtLength];
-    optimal[0] = rodValues[0];
-    for(int i=2; i<=soughtLength; i++) {
+  public int memoizedBottomUp(int[] rodValues, int soughtLength) {
+    int[] optimal = new int[soughtLength+1];
+    optimal[0] = 0;
+    for(int i=1; i<=soughtLength; i++) {
+      int q = -1;
       for(int j=1; j<=i; j++) {
-        int p_j = rodValues[j-1];
-        int r_i_minus_j = j == i ? 0 : optimal[i-j-1];
-        int thisCut = p_j + r_i_minus_j;
-        optimal[i-1] = Math.max(optimal[i-1], thisCut);
+        q = Math.max(q, rodValues[j-1] + optimal[i-j]);
       }
+      optimal[i] = q;
     }
-    return optimal[soughtLength-1];
+    return optimal[soughtLength];
   }
   
   public int easyWork(int[] rodValues, int soughtLength) {
