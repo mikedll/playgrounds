@@ -30,18 +30,46 @@ public class RodCutting {
     System.out.println("Easy work " + value);
     int easierYet = rodCutting.easierYetWork(rodValues, rodValues.length);
     System.out.println("Easier yet work: " + easierYet);
-    int recursiveAnswer = rodCutting.recursive(rodValues, rodValues.length);
-    System.out.println("Recursive: " + recursiveAnswer);
+    int simpleRecursive = rodCutting.simpleRecursive(rodValues, rodValues.length);
+    System.out.println("Naive Recursive: " + simpleRecursive);
+    int memoizedTopDown = rodCutting.memoizedTopDown(rodValues, rodValues.length);
+    System.out.println("memoizedTopDown: " + memoizedTopDown);
     
     // rodCutting.hardWork(rodValues);    
   }
   
-  public int recursive(int[] rodValues, int n) {
+  public int memoizedTopDown(int[] rodValues, int n) {
+    int[] solutions = new int[n+1];
+    for(int i=0; i<=n; i++) {
+      solutions[i] = -1;
+    }
+    return memoizedTopDownAux(rodValues, n, solutions);
+  }
+  
+  public int memoizedTopDownAux(int[] rodValues, int n, int[] solutions) {
+    if(solutions[n] != -1) {
+      return solutions[n];
+    }
+    
+    int q = -1;
+    if(n == 0) {
+      return 0;
+    } else {
+      for(int i=1; i<=n; i++) {
+        q = Math.max(q, rodValues[i-1] + memoizedTopDownAux(rodValues, n-i, solutions));
+      }
+    }    
+    
+    solutions[n] = q;
+    return q;
+  }
+  
+  public int simpleRecursive(int[] rodValues, int n) {
     if(n == 0) return 0;
     
     int q = -1;
     for(int i=1; i<=n; i++) {
-      q = Math.max(q, rodValues[i-1] + recursive(rodValues,n-i));
+      q = Math.max(q, rodValues[i-1] + simpleRecursive(rodValues,n-i));
     }
     
     return q;
