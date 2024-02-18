@@ -15,6 +15,8 @@ public class RodCutting {
   
   // mvn compile exec:java@RodCutting -Dexec.args="large"
   public static void main(String[] args) {
+    RodCutting rodCutting = new RodCutting();
+
     int[] rodValues = new int[] { 1, 5, 8, 9, 10, 17, 17, 20, 24, 30 };
     if(args.length > 0 && args[0].equals("large")) {
       rodValues = new int[40];
@@ -23,9 +25,12 @@ public class RodCutting {
       for(int i=1; i<rodValues.length; i++) {
         rodValues[i] = rodValues[i-1] + rand.nextInt(5);
       }
+      return;
+    } else if(args.length > 0 && args[0].equals("firstTry")) {
+      rodCutting.firstTry(rodValues);
+      return;
     }
     
-    RodCutting rodCutting = new RodCutting();
     int value = rodCutting.easyWork(rodValues, rodValues.length);
     System.out.println("Easy work " + value);
     int memoizedBottomUp = rodCutting.memoizedBottomUp(rodValues, rodValues.length);
@@ -106,7 +111,7 @@ public class RodCutting {
     return optimal[soughtLength-1];
   }
   
-  public void hardWork(int[] rodValues) {
+  public void firstTry(int[] rodValues) {
     for(int rodLength = 1; rodLength <= rodValues.length; rodLength++) {
       System.out.println("r_" + rodLength + ": ");
       Pair<List<List<Integer>>, MyInteger> result = run(rodValues, rodLength);
@@ -133,20 +138,18 @@ public class RodCutting {
     List<List<Integer>> optimal = new ArrayList<>();
     for(int numCuts = 0; numCuts < rodLength; numCuts++) {        
       List<Integer> lengths = Arrays.asList(new Integer[numCuts+1]);
-      buildSeqFrom(rodLength, rodValues, optimal, lengths, 0, rodLength, bestValue);
+      buildSeqFrom(rodLength, rodValues, optimal, lengths, 0, 0, bestValue);
     }
     
     return Pair.with(optimal, bestValue);
   }
   
   public void buildSeqFrom(int originalRodLength, int[] rodValues, List<List<Integer>> optimal, 
-                           List<Integer> lengths, int offset, int remainingRodLength, MyInteger bestValue) {
+    List<Integer> lengths, int offset, int sizeUsed, MyInteger bestValue) {
     
     if(offset > lengths.size()) {
       throw new RuntimeException("offset of " + offset + " is greater than lengths size of " + lengths.size());
     }
-
-    int sizeUsed = lengths.subList(0, offset).stream().reduce(0, Integer::sum);
     
     // base case: final length in the list of lengths.
     // it is determined to be a single value. no need for
@@ -168,7 +171,8 @@ public class RodCutting {
     for(int i=1; i<originalRodLength - sizeUsed; i++) {
       List<Integer> myLengths = new ArrayList<>(lengths);
       myLengths.set(offset, i);
-      buildSeqFrom(originalRodLength, rodValues, optimal, myLengths, offset+1, remainingRodLength-i, bestValue);
+      buildSeqFrom(originalRodLength, rodValues, optimal, myLengths, offset+1, sizeUsed + i, 
+        bestValue);
     }
   }
   
