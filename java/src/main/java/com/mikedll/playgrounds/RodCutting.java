@@ -29,6 +29,11 @@ public class RodCutting {
     } else if(args.length > 0 && args[0].equals("firstTry")) {
       rodCutting.firstTry(rodValues);
       return;
+    } else if(args.length > 0 && args[0].equals("bottomUpPrint")) {
+      for(int i=1; i<=rodValues.length; i++) {
+        rodCutting.printSolutionBottomUp(rodValues, i);        
+      }
+      return;
     }
     
     int value = rodCutting.easyWork(rodValues, rodValues.length);
@@ -92,6 +97,48 @@ public class RodCutting {
       optimal[i] = q;
     }
     return optimal[soughtLength];
+  }
+  
+  public void printSolutionBottomUp(int[] rodValues, int soughtLength) {
+    Pair<Integer[],Integer[]> results = extendedBottomUp(rodValues, soughtLength);
+    System.out.print("r_" + soughtLength + "=" + results.getValue0()[soughtLength] + ", {");
+    List<Integer> cuts = new ArrayList<>();
+    int n = soughtLength;
+    while(n > 0) {
+      cuts.add(results.getValue1()[n-1]);
+      n -= results.getValue1()[n-1];
+    }
+    for(int i=0; i<cuts.size(); i++) {
+      System.out.print(cuts.get(i));
+      if(i < cuts.size() - 1) {
+        System.out.print(",");
+      }
+    }
+    System.out.print("}\n");
+  }
+  
+  public Pair<Integer[],Integer[]> extendedBottomUp(int[] rodValues, int soughtLength) {
+    Integer[] optimalValues = new Integer[rodValues.length+1];
+    Integer[] firstCutLengths = new Integer[soughtLength];
+    
+    optimalValues[0] = 0;
+    for(int i=1; i<=soughtLength; i++) {
+      optimalValues[i] = -1;
+      firstCutLengths[i-1] = -1;
+    }
+    
+    for(int i=1; i<=soughtLength;i++) {
+      int q = -1;
+      for(int j=1; j<=i; j++) {
+        int thisCutValue = rodValues[j-1] + optimalValues[i-j];
+        if(thisCutValue > optimalValues[i]) {
+          optimalValues[i] = thisCutValue;
+          firstCutLengths[i-1] = j;
+        }
+      }
+    }
+    
+    return Pair.with(optimalValues, firstCutLengths);
   }
   
   public int easyWork(int[] rodValues, int soughtLength) {
