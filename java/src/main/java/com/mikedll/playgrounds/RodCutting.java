@@ -4,7 +4,6 @@ import java.lang.Math;
 import java.util.Random;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
@@ -32,6 +31,23 @@ public class RodCutting {
     } else if(args.length > 0 && args[0].equals("bottomUpPrint")) {
       for(int i=1; i<=rodValues.length; i++) {
         rodCutting.printSolutionBottomUp(rodValues, i);        
+      }
+      return;
+    } else if(args.length > 0 && args[0].equals("useDensity")) {
+      rodValues = new int[] { 1,5,7};
+      Arrays.output("rodValues=", rodValues);
+      for(int j=0; j<rodValues.length; j++) {
+        Pair<Integer,List<Integer>> densityValAndCuts = rodCutting.densitySolution(rodValues, j+1);
+        Pair<Integer[], Integer[]> bottomUp = rodCutting.extendedBottomUp(rodValues, j+1);
+        System.out.println("Density approach value for j=" + (j+1) + ", val=" + densityValAndCuts.getValue0() +
+          ", memoizedBottomUp value=" + bottomUp.getValue0()[j+1]);
+        if(!densityValAndCuts.getValue0().equals(bottomUp.getValue0()[j+1])) {
+          System.out.print("densityValue=" + densityValAndCuts.getValue0() + "\n");
+          Arrays.output("densityCuts=", densityValAndCuts.getValue1());
+          System.out.print("bottomUpValue=" + bottomUp.getValue0()[j+1] + "\n");
+          rodCutting.printSolutionBottomUp(rodValues, j+1);
+          // Arrays.output("bottomUpCuts=", bottomUp.getValue1());
+        }
       }
       return;
     }
@@ -184,7 +200,7 @@ public class RodCutting {
     // For cut-counts, generate all possible lengths
     List<List<Integer>> optimal = new ArrayList<>();
     for(int numCuts = 0; numCuts < rodLength; numCuts++) {        
-      List<Integer> lengths = Arrays.asList(new Integer[numCuts+1]);
+      List<Integer> lengths = java.util.Arrays.asList(new Integer[numCuts+1]);
       buildSeqFrom(rodLength, rodValues, optimal, lengths, 0, 0, bestValue);
     }
     
@@ -221,6 +237,40 @@ public class RodCutting {
       buildSeqFrom(originalRodLength, rodValues, optimal, myLengths, offset+1, sizeUsed + i, 
         bestValue);
     }
+  }
+  
+  public Pair<Integer,List<Integer>> densitySolution(int[] rodValues, int soughtLength) {
+    List<Integer> cutLengths = new ArrayList<>();
+    
+    double[] densities = new double[rodValues.length];
+    for(int i=0; i<rodValues.length; i++) {
+      densities[i] = Double.valueOf(rodValues[i]) / Double.valueOf(i+1);
+    }
+    
+    int value = 0;
+    int n = soughtLength;
+    while(n > 0) {
+      double maxDensity = -1.0;
+      int maxI = -1;
+      for(int i=1; i<=densities.length && i<=n; i++) {
+        // System.out.println("densities[i-1]=" + densities[i-1] + ", maxDensity=" + maxDensity);
+        if(densities[i-1] > maxDensity) {
+          // System.out.println("Taking densities[i-1] i=" + i + ", densities[i-1]=" + densities[i-1] + ", i=" + i);
+          maxDensity = densities[i-1];
+          maxI = i;
+        }
+      }
+      if(maxI == -1) {
+        throw new RuntimeException("maxI was not assigned a value (is -1)");
+      }
+
+      value += rodValues[maxI-1];
+      cutLengths.add(maxI);
+      n -= maxI;
+      // System.out.println("n=" + n + ", maxI=" + maxI);
+    }
+    
+    return Pair.with(value, cutLengths);
   }
   
   public class MyInteger {
