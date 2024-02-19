@@ -50,6 +50,14 @@ public class RodCutting {
         }
       }
       return;
+    } else if(args.length == 2 && args[0].equals("withCutCost")) {
+      Integer cost = Integer.parseInt(args[1]);
+      for(int i =1; i<=rodValues.length; i++) {
+        Pair<Integer,List<Integer>> result = rodCutting.withCutCost(rodValues, i, cost);
+        System.out.print("n=" + i + ", optimal value=" + result.getValue0() + ", cuts=");
+        Arrays.output(result.getValue1());
+      }
+      return;        
     }
     
     int value = rodCutting.easyWork(rodValues, rodValues.length);
@@ -253,9 +261,7 @@ public class RodCutting {
       double maxDensity = -1.0;
       int maxI = -1;
       for(int i=1; i<=densities.length && i<=n; i++) {
-        // System.out.println("densities[i-1]=" + densities[i-1] + ", maxDensity=" + maxDensity);
         if(densities[i-1] > maxDensity) {
-          // System.out.println("Taking densities[i-1] i=" + i + ", densities[i-1]=" + densities[i-1] + ", i=" + i);
           maxDensity = densities[i-1];
           maxI = i;
         }
@@ -267,10 +273,42 @@ public class RodCutting {
       value += rodValues[maxI-1];
       cutLengths.add(maxI);
       n -= maxI;
-      // System.out.println("n=" + n + ", maxI=" + maxI);
     }
     
     return Pair.with(value, cutLengths);
+  }
+  
+  public Pair<Integer,List<Integer>> withCutCost(int[] rodValues, int soughtLength, Integer cutCost) {
+    int[] optimal = new int[rodValues.length+1];
+    int[] firstCuts = new int[soughtLength];
+    optimal[0] = 0;
+    List<Integer> solutionCuts = new ArrayList<>();
+    
+    for(int i=1; i<=soughtLength; i++) {
+      int q = -1;
+      int optimalSizeLength = -1;
+      for(int j=1; j<=i; j++) {
+        int costIfCut = j == i ? 0 : cutCost;
+        int thisSizeCost = rodValues[j-1] + optimal[i-j] - costIfCut;
+        if(q < thisSizeCost) {
+          q = thisSizeCost;
+          optimalSizeLength = j;
+        }
+      }
+      optimal[i] = q;
+      firstCuts[i-1] = optimalSizeLength;
+    }
+    
+    int n = soughtLength;
+    while(n > 0) {
+      solutionCuts.add(firstCuts[n-1]);
+      n -= firstCuts[n-1];
+    }
+    if(n < 0) {
+      throw new RuntimeException("n < 0, =" + n);
+    }
+    
+    return Pair.with(optimal[soughtLength],solutionCuts);
   }
   
   public class MyInteger {
