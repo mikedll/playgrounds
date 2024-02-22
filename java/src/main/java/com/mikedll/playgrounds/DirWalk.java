@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class DirWalk {
   
-  public static void main(String[] args) {
+  public static void main(String[] args) {    
     System.out.println("This is the dir walk");
     walkDir(".");    
   }
