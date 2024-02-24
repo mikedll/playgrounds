@@ -7,6 +7,8 @@ db.sqlite
 cantFindModelForSourceStoreDb.sqlite
 java/target/*
 
+node_modules/
+java/tmp/
 
 .emacs.desktop
 .emacs.desktop.lock
