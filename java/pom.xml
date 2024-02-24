@@ -226,6 +226,15 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>Fibonacci</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.mikedll.playgrounds.Fibonacci</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>TopCoder</id>
                         <goals>
                             <goal>java</goal>
