@@ -30,6 +30,6 @@ public class RodCuttingTests {
     Assertions.assertEquals(expected, result.getValue1().value, "set enumeration method");    
     Assertions.assertEquals(expected, rodCutting.easyWork(rodValues, rodLength), "dynamic programming method");
     Assertions.assertEquals(expected, rodCutting.memoizedBottomUp(rodValues, rodLength), "dynamic programming bottom up");
-    Assertions.assertEquals(expected, rodCutting.memoizedTopDown(rodValues, rodLength), "dynamic programming top down");
+    Assertions.assertEquals(expected, rodCutting.memoizedTopDown(rodValues, rodLength).getValue0(), "dynamic programming top down");
   }
 }

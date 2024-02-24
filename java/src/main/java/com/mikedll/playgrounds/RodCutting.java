@@ -33,6 +33,12 @@ public class RodCutting {
         rodCutting.printSolutionBottomUp(rodValues, i);        
       }
       return;
+    } else if(args.length > 0 && args[0].equals("topDownPrint")) {
+      for(int i=1; i<=rodValues.length; i++) {
+        Pair<Integer,List<Integer>> result = rodCutting.memoizedTopDown(rodValues, i);
+        System.out.print("for i=" + i + ", val=" + result.getValue0() + ", solution=");
+        Arrays.output(result.getValue1());
+      }    
     } else if(args.length > 0 && args[0].equals("useDensity")) {
       rodValues = new int[] { 1,5,7};
       Arrays.output("rodValues=", rodValues);
@@ -46,7 +52,6 @@ public class RodCutting {
           Arrays.output("densityCuts=", densityValAndCuts.getValue1());
           System.out.print("bottomUpValue=" + bottomUp.getValue0()[j+1] + "\n");
           rodCutting.printSolutionBottomUp(rodValues, j+1);
-          // Arrays.output("bottomUpCuts=", bottomUp.getValue1());
         }
       }
       return;
@@ -66,35 +71,49 @@ public class RodCutting {
     System.out.println("memoizedBottomUp: " + memoizedBottomUp);
     int simpleRecursive = rodCutting.simpleRecursive(rodValues, rodValues.length);
     System.out.println("Naive Recursive: " + simpleRecursive);
-    int memoizedTopDown = rodCutting.memoizedTopDown(rodValues, rodValues.length);
-    System.out.println("memoizedTopDown: " + memoizedTopDown);
+    Pair<Integer,List<Integer>> topDown = rodCutting.memoizedTopDown(rodValues, rodValues.length);
+    System.out.println("memoizedTopDown: " + topDown.getValue0());
     
     // rodCutting.hardWork(rodValues);    
   }
   
-  public int memoizedTopDown(int[] rodValues, int n) {
+  public Pair<Integer,List<Integer>> memoizedTopDown(int[] rodValues, int n) {
     int[] solutions = new int[n+1];
+    int[] firstCuts = new int[n];
     for(int i=0; i<=n; i++) {
       solutions[i] = -1;
     }
-    return memoizedTopDownAux(rodValues, n, solutions);
+    int value = memoizedTopDownAux(rodValues, n, solutions, firstCuts);
+    List<Integer> cuts = new ArrayList<>();
+    while(n > 0) {
+      cuts.add(firstCuts[n-1]);
+      n -= firstCuts[n-1];
+    }
+    
+    return Pair.with(value, cuts);
   }
   
-  public int memoizedTopDownAux(int[] rodValues, int n, int[] solutions) {
+  public int memoizedTopDownAux(int[] rodValues, int n, int[] solutions, int[] firstCuts) {
     if(solutions[n] != -1) {
       return solutions[n];
     }
     
     int q = -1;
+    int firstCut = n;
     if(n == 0) {
       return 0;
     } else {
       for(int i=1; i<=n; i++) {
-        q = Math.max(q, rodValues[i-1] + memoizedTopDownAux(rodValues, n-i, solutions));
+        int iCutValue = rodValues[i-1] + memoizedTopDownAux(rodValues, n-i, solutions, firstCuts);
+        if(iCutValue > q) {
+          q = iCutValue;
+          firstCut = i;
+        }
       }
     }    
     
     solutions[n] = q;
+    firstCuts[n-1] = firstCut;
     return q;
   }
   
