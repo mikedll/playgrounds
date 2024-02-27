@@ -235,6 +235,15 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>BinarySearch</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.mikedll.playgrounds.BinarySearch</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>TopCoder</id>
                         <goals>
                             <goal>java</goal>
