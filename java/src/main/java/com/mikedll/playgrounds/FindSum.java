@@ -16,8 +16,8 @@ public class FindSum {
     }
     
     int[] set = asSet.stream().mapToInt(Integer::intValue).toArray();
-    InsertionSort is = new InsertionSort();
-    is.sort(set);
+    MergeSort ms = new MergeSort();
+    ms.mergeSort(set, 0, set.length-1);
     System.out.print("Array=");
     Arrays.output(set);
     
