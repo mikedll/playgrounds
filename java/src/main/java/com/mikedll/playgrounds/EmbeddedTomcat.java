@@ -57,37 +57,6 @@ public class EmbeddedTomcat {
         
     File baseDir = createTempDir("tomcat");
     
-    URL url = getClass().getClassLoader().getResource("logging.properties");
-    File loggingFile = null;
-    try {
-      loggingFile = new File(url.toURI());
-    } catch(URISyntaxException ex) {
-      System.out.println("Exception: " + ex.getMessage());
-    }
-
-    /*    
-    File destFile = new File(baseDir.toPath() + "/conf/" + loggingFile.getName());    
-    try {
-      
-      File confDir = new File(baseDir.toPath() + "/conf");
-      confDir.mkdirs();
-      System.out.println("Created conf directory");
-      
-      File logsDir = new File(baseDir.toPath() + "/logs");
-      logsDir.mkdirs();
-      System.out.println("Created logs directory");
-      
-      
-      Files.copy(loggingFile.toPath(), destFile.toPath());
-      System.out.println("Copied logging file to base dir: " + destFile.toPath());
-    } catch (IOException ex) {
-      System.out.println("Failed to copy logging file: " + ex.getMessage());
-    }
-    */
-    
-    // System.setProperty("java.util.logging.config.file", loggingFile.toPath().toString());
-    // System.out.println("java.util.logging.config.file=" + System.getProperty("java.util.logging.config.file"));
-    
     try {
       String configText =
         "handlers = java.util.logging.ConsoleHandler\n" +
