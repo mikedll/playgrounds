@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.ServletException;
 import java.io.File;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
@@ -14,6 +16,7 @@ import java.net.URL;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.logging.LogManager;
+import org.apache.juli.ClassLoaderLogManager;
 import java.io.FileInputStream;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.WebResourceRoot;
@@ -86,7 +89,11 @@ public class EmbeddedTomcat {
     // System.out.println("java.util.logging.config.file=" + System.getProperty("java.util.logging.config.file"));
     
     try {
-      LogManager.getLogManager().readConfiguration(new FileInputStream(loggingFile.toPath().toString()));      
+      String configText =
+        "handlers = java.util.logging.ConsoleHandler\n" +
+        ".level = SEVERE\n";
+      InputStream configStream = new ByteArrayInputStream(configText.getBytes());
+      ClassLoaderLogManager.getLogManager().readConfiguration(configStream);
     } catch(FileNotFoundException ex) {
       throw new RuntimeException(ex);
     } catch(IOException ex) {
