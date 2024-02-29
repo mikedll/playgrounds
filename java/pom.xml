@@ -14,12 +14,18 @@
         <java.version>17</java.version>
         <junit-platform.version>1.9.3</junit-platform.version>
         <log4j2.version>2.20.0</log4j2.version>
+        <tomcat.version>10.1.9</tomcat.version>
         <jackson.version>2.14.3</jackson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <runSuite>**/*Suite.java</runSuite>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>${tomcat.version}</version>
+        </dependency>
         
         <dependency>
             <groupId>com.zaxxer</groupId>
@@ -259,6 +265,15 @@
                         </goals>
                         <configuration>
                             <mainClass>com.mikedll.playgrounds.TopCoder</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>EmbeddedTomcat</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.mikedll.playgrounds.EmbeddedTomcat</mainClass>
                         </configuration>
                     </execution>
                 </executions>
