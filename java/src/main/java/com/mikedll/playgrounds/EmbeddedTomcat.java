@@ -6,12 +6,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.net.URL;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.util.logging.LogManager;
+import java.io.FileInputStream;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.Wrapper;
@@ -58,7 +61,8 @@ public class EmbeddedTomcat {
     } catch(URISyntaxException ex) {
       System.out.println("Exception: " + ex.getMessage());
     }
-    
+
+    /*    
     File destFile = new File(baseDir.toPath() + "/conf/" + loggingFile.getName());    
     try {
       
@@ -76,9 +80,18 @@ public class EmbeddedTomcat {
     } catch (IOException ex) {
       System.out.println("Failed to copy logging file: " + ex.getMessage());
     }
+    */
     
-    // System.setProperty("java.util.logging.config.file", destFile.toPath().toString());
-    System.out.println("java.util.logging.config.file=" + System.getProperty("java.util.logging.config.file"));
+    // System.setProperty("java.util.logging.config.file", loggingFile.toPath().toString());
+    // System.out.println("java.util.logging.config.file=" + System.getProperty("java.util.logging.config.file"));
+    
+    try {
+      LogManager.getLogManager().readConfiguration(new FileInputStream(loggingFile.toPath().toString()));      
+    } catch(FileNotFoundException ex) {
+      throw new RuntimeException(ex);
+    } catch(IOException ex) {
+      throw new RuntimeException(ex);
+    }
     
     tomcat.setBaseDir(baseDir.getAbsolutePath());
     tomcat.setPort(port);
