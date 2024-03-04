@@ -1,6 +1,8 @@
 package com.mikedll.playgrounds;
 
 import java.lang.NumberFormatException;
+import java.time.Instant;
+import java.time.Duration;
 
 public class MergeSort {
   
@@ -8,6 +10,9 @@ public class MergeSort {
     MergeSort ms = new MergeSort();   
     if(args.length == 2 && args[0].equals("withInsertionSort")) {
       ms.withInsertionSort(args[1]);
+      return;
+    } else if(args.length == 1 && args[0].equals("findN0")) {
+      ms.findN0();
       return;
     }
     int[] input = new int[] { 12, 3, 7, 9, 14, 6, 11, 2 };
@@ -22,6 +27,39 @@ public class MergeSort {
       }
     }
     System.out.print("> \n");
+  }
+
+  public void printTime(String title, Duration duration) {
+    System.out.print(title + " cost (ns): ");
+    System.out.printf("%,d", duration.getNano());
+    System.out.println("");    
+  } 
+  
+  public void findN0() {
+    InsertionSort is = new InsertionSort();
+
+    for(int i=1; i<=100; i++) {
+      int[] input = Arrays.getRandom(i*10, 40);
+      int[] inputCopy = Arrays.copy(input);
+      
+      Instant beforeMerge = Instant.now();
+      mergeSort(input, 0, input.length-1);
+      Instant afterMerge = Instant.now();
+      Duration mergeCost = Duration.between(beforeMerge, afterMerge);
+      
+      Instant beforeIns = Instant.now();
+      is.sort(inputCopy);
+      Instant afterIns = Instant.now();
+      Duration insCost = Duration.between(beforeIns, afterIns);
+      
+      int result = insCost.compareTo(mergeCost);
+      if(result > 0) {
+        printTime("MergeSort", mergeCost);    
+        printTime("InsertionSort", insCost);
+        System.out.println("Merge beat insertion sort at n=" + input.length);
+        break;
+      }
+    }
   }
   
   public void withInsertionSort(String kArg) {
