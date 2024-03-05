@@ -3,6 +3,7 @@ package com.mikedll.playgrounds;
 import java.lang.NumberFormatException;
 import java.time.Instant;
 import java.time.Duration;
+import java.lang.NumberFormatException;
 
 public class MergeSort {
   
@@ -13,6 +14,9 @@ public class MergeSort {
       return;
     } else if(args.length == 1 && args[0].equals("findN0")) {
       ms.findN0();
+      return;
+    } else if(args.length >= 1 && args[0].equals("inversions")) {
+      ms.demoCountInversions(args);
       return;
     }
     int[] input = new int[] { 12, 3, 7, 9, 14, 6, 11, 2 };
@@ -27,6 +31,27 @@ public class MergeSort {
       }
     }
     System.out.print("> \n");
+  }
+  
+  public void demoCountInversions(String[] args) {
+    int[] input;
+    if(args.length > 1) {
+      input = new int[args.length-1];
+      for(int i=1; i<args.length; i++) {
+        try {
+          input[i-1] = Integer.parseInt(args[i]);        
+        } catch (NumberFormatException ex) {
+          throw new RuntimeException(ex);
+        }
+      }
+    } else {
+      input = Arrays.getRandom(5);      
+    }
+    MyInteger inversions = new MyInteger();
+    Arrays.output("Input", input);
+    countInversions(input, inversions, 0, input.length-1);
+    Arrays.output("Sorted", input);    
+    System.out.println("Inversions: " + inversions.value);    
   }
 
   public void printTime(String title, Duration duration) {
@@ -141,5 +166,60 @@ public class MergeSort {
       j++;
       k++;
     }
+  }
+  
+  public void countInversions(int[] input, MyInteger inversionCount, int p, int r) {
+    if(p >= r) {
+      return;
+    }
+    
+    int q = (p + r)/2;
+    countInversions(input, inversionCount, p, q);
+    countInversions(input, inversionCount, q+1, r);
+    mergeToCountInversions(input, inversionCount, p, q, r);
+  }
+  
+  public void mergeToCountInversions(int[] input, MyInteger inversionCount, int p, int q, int r) {
+    int lenLeft = (q-p)+1;
+    int lenRight = r-q;
+    int[] left = new int[lenLeft];
+    int[] right = new int[lenRight];
+        
+    for(int i=0; i<lenLeft; i++) {
+      left[i] = input[p+i];
+    }
+    for(int i=0; i<lenRight; i++) {
+      right[i] = input[q+i+1];
+    }
+    int i = 0;
+    int j = 0;
+    int k = p;
+    while(i < lenLeft && j < lenRight) {
+      if(left[i] < right[j]) {
+        input[k] = left[i];
+        i++;
+      } else {
+        input[k] = right[j];
+        inversionCount.value += (lenLeft-i);
+        j++;
+      }
+      k++;
+    }
+    
+    while(i < lenLeft) {
+      input[k] = left[i];
+      i++;
+      k++;
+    }
+    
+    while(j < lenRight) {
+      input[k] = right[j];
+      j++;
+      k++;
+    }    
+  }
+  
+  public class MyInteger {
+    public int value;
   }
 }
