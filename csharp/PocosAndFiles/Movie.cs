@@ -8,7 +8,8 @@ namespace Mikedll.PocosAndFiles.Model
         public DateTime ReleaseDate { get; set; }
         
         public string PrettyReleaseDate {
-            get {
+            get 
+            {
                 return ReleaseDate.ToString("MMMM dd, yyyy");
             }
         }
