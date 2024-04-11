@@ -6,7 +6,9 @@
 # dotenv files
 .env
 
+# data and output
 data/
+output/
 
 # User-specific files
 *.rsuser
