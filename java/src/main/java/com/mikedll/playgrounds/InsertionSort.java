@@ -5,7 +5,7 @@ public class InsertionSort {
     int[] input = Arrays.getRandom(6);
     InsertionSort is = new InsertionSort();
     Arrays.output(input);    
-    is.recursiveSort(input, input.length-1);
+    is.sortDescending(input);
     Arrays.output(input);
   }
   
@@ -27,6 +27,18 @@ public class InsertionSort {
       int key = input[i];
       int j = i-1;
       while(j >= 0 && input[j] > key) {
+        input[j+1] = input[j];
+        j--;
+      }
+      input[j+1] = key;
+    }
+  }
+
+  public void sortDescending(int[] input) {
+    for(int i=1; i<input.length; i++) {
+      int key = input[i];
+      int j = i-1;
+      while(j >= 0 && input[j] <= key) {
         input[j+1] = input[j];
         j--;
       }
